@@ -664,6 +664,7 @@ fn load_removal(state: &mut AutoSplitterState, mem: &Memory, gm: &GameManagerPoi
         state.last_ui_state = ui_state;
     }
 
+    #[cfg(debug_assertions)]
     if game_state != state.last_game_state {
         asr::print_message(&format!("game_state: {}", game_state));
     }
