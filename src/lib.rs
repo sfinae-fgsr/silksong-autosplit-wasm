@@ -28,8 +28,8 @@ use crate::{
         attach_silksong, GameManagerPointers, Memory, PlayerDataPointers, SceneStore,
         GAME_STATE_CUTSCENE, GAME_STATE_ENTERING_LEVEL, GAME_STATE_EXITING_LEVEL,
         GAME_STATE_INACTIVE, GAME_STATE_LOADING, GAME_STATE_MAIN_MENU, GAME_STATE_PLAYING,
-        HERO_TRANSITION_STATE_WAITING_TO_ENTER_LEVEL, MENU_TITLE, QUIT_TO_MENU, UI_STATE_CUTSCENE,
-        UI_STATE_PAUSED, UI_STATE_PLAYING,
+        HERO_TRANSITION_STATE_WAITING_TO_ENTER_LEVEL, MENU_TITLE, OPENING_SCENES, QUIT_TO_MENU,
+        UI_STATE_CUTSCENE, UI_STATE_PAUSED, UI_STATE_PLAYING,
     },
     timer::SplitterAction,
 };
@@ -61,6 +61,7 @@ struct AutoSplitterState {
     last_recoil: bool,
     last_hazard: bool,
     last_health_0: bool,
+    mms_room_dupe: bool,
     #[cfg(debug_assertions)]
     last_health: Option<i32>,
     #[cfg(debug_assertions)]
@@ -91,6 +92,7 @@ impl AutoSplitterState {
             last_recoil: false,
             last_hazard: false,
             last_health_0: false,
+            mms_room_dupe: false,
             #[cfg(debug_assertions)]
             last_health: None,
             #[cfg(debug_assertions)]
@@ -627,6 +629,23 @@ fn load_removal(state: &mut AutoSplitterState, mem: &Memory, gm: &GameManagerPoi
         state.look_for_teleporting = false;
     }
 
+    if game_state == GAME_STATE_LOADING
+        && state.last_game_state == GAME_STATE_CUTSCENE
+        && OPENING_SCENES.contains(&scene_name.as_str())
+    {
+        #[cfg(debug_assertions)]
+        if !state.mms_room_dupe {
+            asr::print_message("mms_room_dupe: true");
+        }
+        state.mms_room_dupe = true;
+    } else if game_state == GAME_STATE_PLAYING {
+        #[cfg(debug_assertions)]
+        if state.mms_room_dupe {
+            asr::print_message("mms_room_dupe: false");
+        }
+        state.mms_room_dupe = false;
+    }
+
     // TODO: hazard_respawning
     let accepting_input: bool = mem.deref(&gm.accepting_input).unwrap_or_default();
     let hero_transition_state: i32 = mem.deref(&gm.hero_transition_state).unwrap_or_default();
@@ -640,8 +659,11 @@ fn load_removal(state: &mut AutoSplitterState, mem: &Memory, gm: &GameManagerPoi
             && ui_state != UI_STATE_PLAYING)
         || (game_state != GAME_STATE_PLAYING
             && game_state != GAME_STATE_CUTSCENE
-            && !accepting_input)
-        || ((game_state == GAME_STATE_EXITING_LEVEL && scene_load_activation_allowed)
+            && !accepting_input
+            && !state.mms_room_dupe)
+        || ((game_state == GAME_STATE_EXITING_LEVEL
+            && scene_load_activation_allowed
+            && !state.mms_room_dupe)
             || game_state == GAME_STATE_LOADING)
         || (hero_transition_state == HERO_TRANSITION_STATE_WAITING_TO_ENTER_LEVEL)
         || (ui_state != UI_STATE_PLAYING
