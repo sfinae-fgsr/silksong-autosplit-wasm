@@ -614,7 +614,8 @@ fn load_removal(state: &mut AutoSplitterState, mem: &Memory, gm: &GameManagerPoi
     let next_scene = mem.read_string(&gm.next_scene_name).unwrap_or_default();
 
     let loading_menu = (scene_name != MENU_TITLE && next_scene.is_empty())
-        || (scene_name != MENU_TITLE && next_scene == MENU_TITLE || (scene_name == QUIT_TO_MENU));
+        || (scene_name != MENU_TITLE && next_scene == MENU_TITLE)
+        || (scene_name == QUIT_TO_MENU);
 
     // TODO: teleporting, look_for_teleporting
 
