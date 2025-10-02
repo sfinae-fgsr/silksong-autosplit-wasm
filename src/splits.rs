@@ -7,7 +7,7 @@ use ugly_widget::{
 
 use crate::{
     silksong_memory::{
-        is_menu, GameManagerPointers, Memory, PlayerDataPointers, SceneStore,
+        is_menu, GameManagerPointers, Memory, PlayerDataPointers, SceneStore, PlayerDataStore,
         DEATH_RESPAWN_MARKER_INIT, GAME_STATE_PLAYING, MENU_TITLE, NON_MENU_GAME_STATES,
         OPENING_SCENES,
     },
@@ -331,6 +331,10 @@ pub enum Split {
     // endregion: NeedleUpgrade
 
     // region: MaskShards
+	/// Mask Shard (Obtain)
+	///
+	/// Splits when obtaining a Mask Shard or upgrade for complete Mask
+	OnObtainMaskShard,
     /// Mask Shard 1 (Fragment)
     ///
     /// Splits when getting 1st Mask Shard
@@ -1008,6 +1012,7 @@ pub fn continuous_splits(
     mem: &Memory,
     gm: &GameManagerPointers,
     pd: &PlayerDataPointers,
+	pds: &mut PlayerDataStore,
 ) -> SplitterAction {
     let game_state: i32 = mem.deref(&gm.game_state).unwrap_or_default();
     if !NON_MENU_GAME_STATES.contains(&game_state) {
@@ -1138,6 +1143,7 @@ pub fn continuous_splits(
         // endregion: NeedleUpgrade
 
         // region: MaskShards
+		Split::OnObtainMaskShard => should_split(pds.obtained_mask_shard(false, mem, pd)),
         Split::MaskShard1 => should_split(
             mem.deref(&pd.heart_pieces).is_ok_and(|n: i32| n == 1)
                 && mem.deref(&pd.max_health_base).is_ok_and(|n: i32| n == 5),
@@ -1519,8 +1525,9 @@ pub fn splits(
     pd: &PlayerDataPointers,
     trans_now: bool,
     ss: &mut SceneStore,
+	pds: &mut PlayerDataStore,
 ) -> SplitterAction {
-    let a1 = continuous_splits(split, mem, gm, pd).or_else(|| {
+    let a1 = continuous_splits(split, mem, gm, pd, pds).or_else(|| {
         let scenes = ss.pair();
         let a2 = if !ss.split_this_transition {
             transition_once_splits(split, &scenes, mem, gm, pd)

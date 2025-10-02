@@ -4,6 +4,7 @@ use core::mem;
 use alloc::format;
 use alloc::{
     boxed::Box,
+    collections::BTreeMap,
     string::{String, ToString},
     vec::Vec,
 };
@@ -509,6 +510,76 @@ impl SceneStore {
 impl Default for SceneStore {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+// --------------------------------------------------------
+
+pub struct PlayerDataStore {
+    map_i32: BTreeMap<&'static str, i32>,
+}
+
+impl PlayerDataStore {
+    pub fn new() -> PlayerDataStore {
+        PlayerDataStore {
+            map_i32: BTreeMap::new(),
+        }
+    }
+    pub fn reset(&mut self) {
+        self.map_i32.clear();
+    }
+
+    fn changed_i32<const N: usize>(
+        &mut self,
+        is_menu: bool,
+        mem: &Memory,
+        key: &'static str,
+        ptr: &UnityPointer<N>,
+    ) -> Option<Pair<i32>> {
+        let store_val = self.map_i32.get(key).cloned();
+        let current = mem.deref(ptr).ok()?;
+        if current != 0 || !is_menu {
+            self.map_i32.insert(key, current);
+        }
+        let old = store_val?;
+        if current != old {
+            Some(Pair { old, current })
+        } else {
+            None
+        }
+    }
+
+    fn changed_i32_delta<const N: usize>(
+        &mut self,
+        is_menu: bool,
+        mem: &Memory,
+        key: &'static str,
+        ptr: &UnityPointer<N>,
+    ) -> Option<i32> {
+        let Pair { old, current } = self.changed_i32(is_menu, mem, key, ptr)?;
+        Some(current - old)
+    }
+
+    fn incremented_i32<const N: usize>(
+        &mut self,
+        is_menu: bool,
+        mem: &Memory,
+        key: &'static str,
+        ptr: &UnityPointer<N>,
+    ) -> bool {
+        self.changed_i32_delta(is_menu, mem, key, ptr)
+            .is_some_and(|d| d == 1)
+    }
+
+    pub fn obtained_mask_shard(
+        &mut self,
+        is_menu: bool,
+        mem: &Memory,
+        pd: &PlayerDataPointers,
+    ) -> bool {
+        self.incremented_i32(is_menu, mem, "max_health_base", &pd.max_health_base)
+            || (self.incremented_i32(is_menu, mem, "heart_pieces", &pd.heart_pieces)
+                && self.map_i32.get("heart_pieces").is_some_and(|&s| s < 4))
     }
 }
 

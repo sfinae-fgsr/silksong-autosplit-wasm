@@ -25,7 +25,7 @@ use ugly_widget::{
 
 use crate::{
     silksong_memory::{
-        attach_silksong, GameManagerPointers, Memory, PlayerDataPointers, SceneStore,
+        attach_silksong, GameManagerPointers, Memory, PlayerDataPointers, SceneStore, PlayerDataStore,
         GAME_STATE_CUTSCENE, GAME_STATE_ENTERING_LEVEL, GAME_STATE_EXITING_LEVEL,
         GAME_STATE_INACTIVE, GAME_STATE_LOADING, GAME_STATE_MAIN_MENU, GAME_STATE_PLAYING,
         HERO_TRANSITION_STATE_WAITING_TO_ENTER_LEVEL, MENU_TITLE, OPENING_SCENES, QUIT_TO_MENU,
@@ -440,6 +440,7 @@ async fn main() {
             .until_closes(async {
                 // TODO: Load some initial information from the process.
                 let mut scene_store = Box::new(SceneStore::new());
+				let mut player_data_store = Box::new(PlayerDataStore::new());
                 next_tick().await;
                 let mem = Memory::wait_attach(&process).await;
                 next_tick().await;
@@ -474,7 +475,7 @@ async fn main() {
                     state.update(&settings);
 
                     // TODO: Do something on every tick.
-                    handle_splits(&settings, &mut state, &mem, &gm, &pd, &mut scene_store).await;
+                    handle_splits(&settings, &mut state, &mem, &gm, &pd, &mut scene_store, &mut player_data_store).await;
                     load_removal(&mut state, &mem, &gm);
                     handle_hits(&settings, &mut state, &mem, &gm, &pd);
                     next_tick().await;
@@ -502,6 +503,7 @@ async fn handle_splits(
     gm: &GameManagerPointers,
     pd: &PlayerDataPointers,
     ss: &mut SceneStore,
+	pds: &mut PlayerDataStore,
 ) {
     let trans_now = ss.transition_now(mem, gm);
     loop {
@@ -511,7 +513,7 @@ async fn handle_splits(
                 let Some(split) = settings.get_split(0) else {
                     break;
                 };
-                let a = splits::splits(&split, mem, gm, pd, trans_now, ss);
+                let a = splits::splits(&split, mem, gm, pd, trans_now, ss, pds);
                 match a {
                     SplitterAction::Split => {
                         asr::timer::start();
@@ -529,7 +531,7 @@ async fn handle_splits(
                 else {
                     break;
                 };
-                let a = splits::splits(&split, mem, gm, pd, trans_now, ss);
+                let a = splits::splits(&split, mem, gm, pd, trans_now, ss, pds);
                 match a {
                     SplitterAction::Reset => {
                         if settings.get_hit_counter() {
