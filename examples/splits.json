@@ -127,6 +127,12 @@
   },
   {
     "alias": null,
+    "description": "Enter Hunter's March (Transition)",
+    "key": "EnterHuntersMarch",
+    "tooltip": "Splits on entering Hunter's March in the room after the Skarrguard encounter"
+  },
+  {
+    "alias": null,
     "description": "Enter Far Fields (Transition)",
     "key": "EnterFarFields",
     "tooltip": "Splits when entering Far Fields"
@@ -232,6 +238,12 @@
     "description": "Leave The Mist (Transition)",
     "key": "LeaveMist",
     "tooltip": "Splits when leaving The Mist"
+  },
+  {
+    "alias": null,
+    "description": "Enter Bilewater (Transition)",
+    "key": "EnterBilewater",
+    "tooltip": "Splits when entering Bilewater from Sinner's Road or Whispering Vaults"
   },
   {
     "alias": null,
