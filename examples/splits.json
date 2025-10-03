@@ -984,6 +984,12 @@
     "tooltip": "Splits when you obtain Karmelita's Heart"
   },
   {
+    "alias": null,
+    "description": "Enter Verdania Memory (Transition)",
+    "key": "EnterVerdaniaMemory",
+    "tooltip": "Splits when entering the Verdania Memory"
+  },
+  {
     "alias": "CollectedHeartClover",
     "description": "Clover Dancer's Heart (Item)",
     "key": "HeartClover",
