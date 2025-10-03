@@ -61,6 +61,12 @@
   },
   {
     "alias": null,
+    "description": "Enter Mosshome (Transition)",
+    "key": "EnterMosshome",
+    "tooltip": "Splits when entering Mosshome (Mosstown_01)"
+  },
+  {
+    "alias": null,
     "description": "Silk Spear (Skill)",
     "key": "SilkSpear",
     "tooltip": "Splits when obtaining Silk Spear"
@@ -70,6 +76,12 @@
     "description": "Silk Spear (Transition)",
     "key": "SilkSpearTrans",
     "tooltip": "Splits on the transition after obtaining Silk Spear"
+  },
+  {
+    "alias": null,
+    "description": "Bone Bottom Simple Key (Item)",
+    "key": "BoneBottomSimpleKey",
+    "tooltip": "Splits when buying the Bone Bottom simple key from Pebb"
   },
   {
     "alias": null,
@@ -241,6 +253,12 @@
   },
   {
     "alias": null,
+    "description": "Enter Sinner's Road (Transition)",
+    "key": "EnterSinnersRoad",
+    "tooltip": "Splits when entering Sinner's Road from Greymoor"
+  },
+  {
+    "alias": null,
     "description": "Enter The Mist (Transition)",
     "key": "EnterMist",
     "tooltip": "Splits when entering The Mist"
@@ -256,6 +274,12 @@
     "description": "Enter Bilewater (Transition)",
     "key": "EnterBilewater",
     "tooltip": "Splits when entering Bilewater from Sinner's Road or Whispering Vaults"
+  },
+  {
+    "alias": null,
+    "description": "Enter Exhaust Organ (Transition)",
+    "key": "EnterExhaustOrgan",
+    "tooltip": "Splits when entering the Exhaust Organ from Bilewater"
   },
   {
     "alias": null,
