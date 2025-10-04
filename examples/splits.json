@@ -139,6 +139,18 @@
   },
   {
     "alias": null,
+    "description": "Sharpdart (Skill)",
+    "key": "Sharpdart",
+    "tooltip": "Splits when obtaining Sharpdart"
+  },
+  {
+    "alias": null,
+    "description": "Sharpdart (Transition)",
+    "key": "SharpdartTrans",
+    "tooltip": "Splits on the transition after obtaining Sharpdart"
+  },
+  {
+    "alias": null,
     "description": "Enter Hunter's March (Transition)",
     "key": "EnterHuntersMarch",
     "tooltip": "Splits on entering Hunter's March in the room after the Skarrguard encounter"
@@ -190,6 +202,18 @@
     "description": "Moorwing (Transition)",
     "key": "MoorwingTrans",
     "tooltip": "Splits on the transition after killing Moorwing"
+  },
+  {
+    "alias": null,
+    "description": "Thread Storm (Skill)",
+    "key": "ThreadStorm",
+    "tooltip": "Splits when obtaining Thread Storm"
+  },
+  {
+    "alias": null,
+    "description": "Thread Storm (Transition)",
+    "key": "ThreadStormTrans",
+    "tooltip": "Splits on the transition after obtaining Thread Storm"
   },
   {
     "alias": null,
@@ -289,6 +313,30 @@
   },
   {
     "alias": null,
+    "description": "Cross Stitch (Skill)",
+    "key": "CrossStitch",
+    "tooltip": "Splits when obtaining Cross Stitch"
+  },
+  {
+    "alias": null,
+    "description": "Cross Stitch (Transition)",
+    "key": "CrossStitchTrans",
+    "tooltip": "Splits on the transition after obtaining Cross Stitch"
+  },
+  {
+    "alias": null,
+    "description": "Rune Rage (Skill)",
+    "key": "RuneRage",
+    "tooltip": "Splits when obtaining Rune Rage"
+  },
+  {
+    "alias": null,
+    "description": "Rune Rage (Transition)",
+    "key": "RuneRageTrans",
+    "tooltip": "Splits on the transition after obtaining Rune Rage"
+  },
+  {
+    "alias": null,
     "description": "Act 2 Started (Event)",
     "key": "Act2Started",
     "tooltip": "Splits when starting Act 2"
@@ -352,6 +400,18 @@
     "description": "Lace 2 (Boss)",
     "key": "Lace2",
     "tooltip": "Splits when defeating Lace 2 in TheCradle"
+  },
+  {
+    "alias": null,
+    "description": "Pale Nails (Skill)",
+    "key": "PaleNails",
+    "tooltip": "Splits when obtaining Pale Nails"
+  },
+  {
+    "alias": null,
+    "description": "Pale Nails (Transition)",
+    "key": "PaleNailsTrans",
+    "tooltip": "Splits on the transition after obtaining Pale Nails"
   },
   {
     "alias": null,
