@@ -1003,6 +1003,18 @@
   },
   {
     "alias": null,
+    "description": "Enter Bell Eater (Transition)",
+    "key": "EnterBellEater",
+    "tooltip": "Splits when entering the Bell Eater's arena"
+  },
+  {
+    "alias": null,
+    "description": "Beastling Call (Skill)",
+    "key": "BeastlingCall",
+    "tooltip": "Splits when obtaining Beastling Call"
+  },
+  {
+    "alias": null,
     "description": "Silk Soar (Skill)",
     "key": "SilkSoar",
     "tooltip": "Splits when you obtain Super Jump"
