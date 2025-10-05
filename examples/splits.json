@@ -601,9 +601,171 @@
   },
   {
     "alias": null,
+    "description": "Spool Fragment 1 (Fragment)",
+    "key": "SpoolFragment1",
+    "tooltip": "Splits when getting 1st Spool Fragment"
+  },
+  {
+    "alias": null,
+    "description": "Spool Upgrade 2 (Upgrade)",
+    "key": "Spool1",
+    "tooltip": "Splits when getting 1 extra Spool Extension (10 base silk)"
+  },
+  {
+    "alias": null,
+    "description": "Spool Fragment 3 (Fragment)",
+    "key": "SpoolFragment3",
+    "tooltip": "Splits when getting 3rd Spool Fragment"
+  },
+  {
+    "alias": null,
+    "description": "Spool Upgrade 4 (Upgrade)",
+    "key": "Spool2",
+    "tooltip": "Splits when getting 2 extra Spool Extension (11 base silk)"
+  },
+  {
+    "alias": null,
+    "description": "Spool Fragment 5 (Fragment)",
+    "key": "SpoolFragment5",
+    "tooltip": "Splits when getting 5th Spool Fragment"
+  },
+  {
+    "alias": null,
+    "description": "Spool Upgrade 6 (Upgrade)",
+    "key": "Spool3",
+    "tooltip": "Splits when getting 3 extra Spool Extension (12 base silk)"
+  },
+  {
+    "alias": null,
+    "description": "Spool Fragment 7 (Fragment)",
+    "key": "SpoolFragment7",
+    "tooltip": "Splits when getting 7th Spool Fragment"
+  },
+  {
+    "alias": null,
+    "description": "Spool Upgrade 8 (Upgrade)",
+    "key": "Spool4",
+    "tooltip": "Splits when getting 4 extra Spool Extension (13 base silk)"
+  },
+  {
+    "alias": null,
+    "description": "Spool Fragment 9 (Fragment)",
+    "key": "SpoolFragment9",
+    "tooltip": "Splits when getting 9th Spool Fragment"
+  },
+  {
+    "alias": null,
+    "description": "Spool Upgrade 10 (Upgrade)",
+    "key": "Spool5",
+    "tooltip": "Splits when getting 5 extra Spool Extension (14 base silk)"
+  },
+  {
+    "alias": null,
+    "description": "Spool Fragment 11 (Fragment)",
+    "key": "SpoolFragment11",
+    "tooltip": "Splits when getting 11th Spool Fragment"
+  },
+  {
+    "alias": null,
+    "description": "Spool Upgrade 12 (Upgrade)",
+    "key": "Spool6",
+    "tooltip": "Splits when getting 6 extra Spool Extension (15 base silk)"
+  },
+  {
+    "alias": null,
+    "description": "Spool Fragment 13 (Fragment)",
+    "key": "SpoolFragment13",
+    "tooltip": "Splits when getting 13th Spool Fragment"
+  },
+  {
+    "alias": null,
+    "description": "Spool Upgrade 14 (Upgrade)",
+    "key": "Spool7",
+    "tooltip": "Splits when getting 7 extra Spool Extension (16 base silk)"
+  },
+  {
+    "alias": null,
+    "description": "Spool Fragment 15 (Fragment)",
+    "key": "SpoolFragment15",
+    "tooltip": "Splits when getting 15th Spool Fragment"
+  },
+  {
+    "alias": null,
+    "description": "Spool Upgrade 16 (Upgrade)",
+    "key": "Spool8",
+    "tooltip": "Splits when getting 8 extra Spool Extension (17 base silk)"
+  },
+  {
+    "alias": null,
+    "description": "Spool Fragment 17 (Fragment)",
+    "key": "SpoolFragment17",
+    "tooltip": "Splits when getting 17th Spool Fragment"
+  },
+  {
+    "alias": null,
+    "description": "Spool Upgrade 18 (Upgrade)",
+    "key": "Spool9",
+    "tooltip": "Splits when getting 9 extra Spool Extension (18 base silk)"
+  },
+  {
+    "alias": null,
+    "description": "Reaper Crest (Crest)",
+    "key": "ReaperCrest",
+    "tooltip": "Splits when the Reaper Crest is unlocked"
+  },
+  {
+    "alias": null,
     "description": "Reaper Crest (Transition)",
     "key": "ReaperCrestTrans",
     "tooltip": "Splits when leaving the church with the Reaper Crest unlocked"
+  },
+  {
+    "alias": null,
+    "description": "Wanderer Crest (Crest)",
+    "key": "WandererCrest",
+    "tooltip": "Splits when the Wanderer Crest is unlocked"
+  },
+  {
+    "alias": null,
+    "description": "Wanderer Crest (Transition)",
+    "key": "WandererCrestTrans",
+    "tooltip": "Splits when leaving the chapel with the Wanderer Crest unlocked"
+  },
+  {
+    "alias": null,
+    "description": "Beast Crest (Crest)",
+    "key": "BeastCrest",
+    "tooltip": "Splits when the Beast Crest is unlocked"
+  },
+  {
+    "alias": null,
+    "description": "Beast Crest (Transition)",
+    "key": "BeastCrestTrans",
+    "tooltip": "Splits when leaving the room with the Beast Crest unlocked"
+  },
+  {
+    "alias": null,
+    "description": "Architect Crest (Crest)",
+    "key": "ArchitectCrest",
+    "tooltip": "Splits when the Architect Crest is unlocked"
+  },
+  {
+    "alias": null,
+    "description": "Architect Crest (Transition)",
+    "key": "ArchitectCrestTrans",
+    "tooltip": "Splits when leaving the room with the Architect Crest unlocked"
+  },
+  {
+    "alias": null,
+    "description": "Shaman Crest (Crest)",
+    "key": "ShamanCrest",
+    "tooltip": "Splits when the Shaman Crest is unlocked"
+  },
+  {
+    "alias": null,
+    "description": "Shaman Crest (Transition)",
+    "key": "ShamanCrestTrans",
+    "tooltip": "Splits when leaving the room with the Shaman Crest unlocked"
   },
   {
     "alias": null,
