@@ -234,6 +234,10 @@ declare_pointers!(PlayerDataPointers {
     silk_max: UnityPointer<3> = UnityPointer::new("GameManager", 0, &["_instance", "playerData", "silkMax"]),
     silk_spool_parts: UnityPointer<3> = UnityPointer::new("GameManager", 0, &["_instance", "playerData", "silkSpoolParts"]),
     completed_memory_reaper: UnityPointer<3> = UnityPointer::new("GameManager", 0, &["_instance", "playerData", "completedMemory_reaper"]),
+    completed_memory_wanderer: UnityPointer<3> = UnityPointer::new("GameManager", 0, &["_instance", "playerData", "completedMemory_wanderer"]),
+    completed_memory_beast: UnityPointer<3> = UnityPointer::new("GameManager", 0, &["_instance", "playerData", "completedMemory_beast"]),
+    completed_memory_toolmaster: UnityPointer<3> = UnityPointer::new("GameManager", 0, &["_instance", "playerData", "completedMemory_toolmaster"]),
+    completed_memory_shaman: UnityPointer<3> = UnityPointer::new("GameManager", 0, &["_instance", "playerData", "completedMemory_shaman"]),
 
     savedflea_ant_03: UnityPointer<3> = UnityPointer::new("GameManager", 0, &["_instance", "playerData", "SavedFlea_Ant_03"]),
     savedflea_belltown_04: UnityPointer<3> = UnityPointer::new("GameManager", 0, &["_instance", "playerData", "SavedFlea_Belltown_04"]),
