@@ -139,6 +139,12 @@
   },
   {
     "alias": null,
+    "description": "Enter Upper Wormways (Transition)",
+    "key": "EnterUpperWormways",
+    "tooltip": "Splits on entering the vertical transition to the upper portion of Wormways (Crawl_03)"
+  },
+  {
+    "alias": null,
     "description": "Sharpdart (Skill)",
     "key": "Sharpdart",
     "tooltip": "Splits when obtaining Sharpdart"
@@ -1224,6 +1230,12 @@
     "tooltip": "Splits when entering the Verdania Memory"
   },
   {
+    "alias": null,
+    "description": "Enter Verdania Castle (Transition)",
+    "key": "EnterVerdaniaCastle",
+    "tooltip": "Splits when entering the room containing the Clover Dancers boss"
+  },
+  {
     "alias": "CollectedHeartClover",
     "description": "Clover Dancer's Heart (Item)",
     "key": "HeartClover",
@@ -1240,6 +1252,12 @@
     "description": "Pavo Bellhome Key (NPC)",
     "key": "BellhouseKeyConversation",
     "tooltip": "Splits when obtaining Bellhome Key from Pavo"
+  },
+  {
+    "alias": null,
+    "description": "Verdania Lake Fountain Orbs (Event)",
+    "key": "VerdaniaLakeFountainOrbs",
+    "tooltip": "Splits when the orbs appear after activating the shrine in the Verdania lake"
   },
   {
     "alias": null,
