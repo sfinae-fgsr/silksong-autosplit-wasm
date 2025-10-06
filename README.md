@@ -116,4 +116,19 @@ My approach to adding a new autosplit would look like this:
 3. If multiple candidates pass step (2), ask for help. In the example of `hasSilkSpecial` and `hasNeedleThrow`, I got help from Atomic and Kazekai on the speedrun discord `#ss-tech-support` channel.
 4. Make a new branch on your clone of the Github repository for the new feature you want to add. I'd recommend that you *don't* just use your master branch.
 5. Add the field to the relevant `declare_pointers!` statement in `silksong_memory.rs`, add the split to the `Splits` datatype in `splits.rs`, and add the code for the split in the relevant function (either `menu_splits`, `transition_splits`, or `continuous_splits` in `splits.rs`).
-6. Make a Pull Request on the Github repository (https://github.com/AlexKnauth/silksong-autosplit-wasm/pulls).
+6. Do not update `splits.json`, unless you are deploying a new release, in which case see below.
+7. Make a Pull Request on the Github repository (https://github.com/AlexKnauth/silksong-autosplit-wasm/pulls).
+
+## Deploying a new release
+
+My approad to deploying a new release looks like this:
+1. Review Pull Requests, and merge those that are good and ready to the master branch.
+2. Update `splits.json` with the command `make examples/splits.json`. If `make` says it's up-to-date and you know it isn't, `touch src/splits.rs` before running `make` again.
+3. Update `Cargo.toml` with the new version number, following [Semantic Versioning](https://semver.org/). Given `MAJOR.MINOR.PATCH`:
+   - Increment `PATCH` when just releasing bug-fixes that don't add any new settings or splits.
+   - Increment `MINOR` when the release includes new features, new settings, or new splits.
+   - Increment `MAJOR` if there've been incompatible settings changes, but like... try to avoid those if possible.
+4. Run `cargo b` in both debug and `--release` mode, and in both `--no-default-features` and default-features mode. Check that `Cargo.lock` has been updated.
+5. Commit those changes, which should include `splits.json`, `Cargo.toml`, and `Cargo.lock`, with a commit name starting with `Release` and then the new version number.
+6. Add a tag with the new version number on the Release commit, and push both master and the tag.
+7. Check the CI to make sure all jobs pass. Sometimes there's a data race between jobs for `legacy` vs `stable`, where they both try to create their own release at the same time, so a release with only one of them is created as the other fails. When this happens, re-run the failed jobs to ensure that the release contains both `legacy` and `stable` variants.
