@@ -121,7 +121,7 @@ My approach to adding a new autosplit would look like this:
 
 ## Deploying a new release
 
-My approad to deploying a new release looks like this:
+My approach to deploying a new release looks like this:
 1. Review Pull Requests, and merge those that are good and ready to the master branch.
 2. Update `splits.json` with the command `make examples/splits.json`. If `make` says it's up-to-date and you know it isn't, `touch src/splits.rs` before running `make` again.
 3. Update `Cargo.toml` with the new version number, following [Semantic Versioning](https://semver.org/). Given `MAJOR.MINOR.PATCH`:
