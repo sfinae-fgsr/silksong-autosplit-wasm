@@ -163,6 +163,12 @@
   },
   {
     "alias": null,
+    "description": "Hunter's March - Post-Middle Arena (Transition)",
+    "key": "HuntersMarchPostMiddleArenaTransition",
+    "tooltip": "Splits on transition to the room after the middle arena in Hunter's March"
+  },
+  {
+    "alias": null,
     "description": "Enter Far Fields (Transition)",
     "key": "EnterFarFields",
     "tooltip": "Splits when entering Far Fields"
