@@ -256,6 +256,10 @@ pub enum Split {
     ///
     /// Splits when killing Last Judge
     LastJudge,
+    /// Enter Citadel Front Gate (Transition)
+    ///
+    /// Splits when entering the Citadel past the Last Judge arena
+    EnterCitadelFrontGate,
     // endregion: BlastedSteps
 
     // region: SinnersRoad
@@ -1297,6 +1301,9 @@ pub fn transition_splits(
         }
         Split::EnterLastJudge => {
             should_split(scenes.old == "Coral_32" && scenes.current == "Coral_Judge_Arena")
+        }
+        Split::EnterCitadelFrontGate => {
+            should_split(scenes.old == "Coral_Judge_Arena" && scenes.current == "Coral_10")
         }
         // endregion: BlastedSteps
 
