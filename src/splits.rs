@@ -243,6 +243,10 @@ pub enum Split {
     ///
     /// Splits on the transition after obtaining Needle Strike (Charge Slash)
     NeedleStrikeTrans,
+    /// Needle Strike (Menu)
+    ///
+    /// Splits on the main menu after obtaining Needle Strike (Charge Slash)
+    NeedleStrikeMenu,
     /// Enter Last Judge (Transition)
     ///
     /// Splits when entering the Last Judge boss arena from the Blasted Steps
@@ -1168,14 +1172,20 @@ impl StoreWidget for Split {
 pub fn menu_splits(
     split: &Split,
     scenes: &Pair<&str>,
-    _mem: &Memory,
+    mem: &Memory,
     _gm: &GameManagerPointers,
-    _pd: &PlayerDataPointers,
+    pd: &PlayerDataPointers,
 ) -> SplitterAction {
     match split {
         // region: Start, End, and Menu
         Split::Menu => should_split(scenes.current == MENU_TITLE),
         // endregion: Start, End, and Menu
+
+        // region: BlastedSteps
+        Split::NeedleStrikeMenu => {
+            should_split(mem.deref(&pd.has_charge_slash).unwrap_or_default())
+        }
+        // endregion: BlastedSteps
 
         // else
         _ => should_split(false),
