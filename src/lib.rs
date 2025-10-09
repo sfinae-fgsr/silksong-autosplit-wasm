@@ -9,7 +9,7 @@ pub mod splits;
 mod timer;
 mod unstable;
 
-use alloc::{boxed::Box, format, vec::Vec};
+use alloc::{boxed::Box, format, string::String, vec::Vec};
 use asr::{
     future::{next_tick, retry},
     settings::Gui,
@@ -28,8 +28,8 @@ use crate::{
         attach_silksong, GameManagerPointers, Memory, PlayerDataPointers, SceneStore,
         GAME_STATE_CUTSCENE, GAME_STATE_ENTERING_LEVEL, GAME_STATE_EXITING_LEVEL,
         GAME_STATE_INACTIVE, GAME_STATE_LOADING, GAME_STATE_MAIN_MENU, GAME_STATE_PLAYING,
-        HERO_TRANSITION_STATE_WAITING_TO_ENTER_LEVEL, MENU_TITLE, OPENING_SCENES, QUIT_TO_MENU,
-        UI_STATE_CUTSCENE, UI_STATE_PAUSED, UI_STATE_PLAYING,
+        HERO_TRANSITION_STATE_WAITING_TO_ENTER_LEVEL, MENU_TITLE, NON_MENU_GAME_STATES,
+        OPENING_SCENES, QUIT_TO_MENU, UI_STATE_CUTSCENE, UI_STATE_PAUSED, UI_STATE_PLAYING,
     },
     timer::SplitterAction,
 };
@@ -49,6 +49,10 @@ fn this_script_name() -> &'static str {
 
 /// The dash symbol to use for generic dashes in text.
 pub const DASH: &str = "—";
+/// The minus symbol to use for negative numbers.
+const MINUS: &str = "−";
+/// The plus symbol to use for positive numbers.
+const PLUS: &str = "+";
 
 // --------------------------------------------------------
 
@@ -164,6 +168,9 @@ impl AutoSplitterState {
                     asr::timer::set_variable("hits", DASH);
                     asr::timer::set_variable("segment hits", DASH);
                 }
+                asr::timer::set_variable("comparison hits", DASH);
+                asr::timer::set_variable("delta hits", DASH);
+                asr::timer::set_variable("percent", DASH);
                 self.look_for_teleporting = false;
                 self.last_game_state = GAME_STATE_INACTIVE;
                 #[cfg(debug_assertions)]
@@ -173,8 +180,18 @@ impl AutoSplitterState {
             }
             TimerState::Running if is_timer_state_between_runs(self.timer_state) => {
                 // Start
-                self.segment_hits
-                    .resize(new_index.unwrap_or_default() as usize + 1, 0);
+                let new_i = new_index.unwrap_or_default() as usize;
+                self.segment_hits.resize(new_i + 1, 0);
+                if settings.get_hit_counter() {
+                    asr::timer::set_variable_int("segment hits", self.segment_hits[new_i]);
+                    if let Some(c) = self.comparison_hits.get(new_i) {
+                        asr::timer::set_variable_int("comparison hits", *c);
+                        asr::timer::set_variable("delta hits", &delta_string(self.hits - c));
+                    } else {
+                        asr::timer::set_variable("comparison hits", DASH);
+                        asr::timer::set_variable("delta hits", DASH);
+                    }
+                }
             }
             TimerState::Paused if self.timer_state == TimerState::Running => {
                 // Pause
@@ -253,7 +270,7 @@ impl AutoSplitterState {
                         asr::timer::set_variable_int("segment hits", self.segment_hits[new_i]);
                         if let Some(c) = self.comparison_hits.get(new_i) {
                             asr::timer::set_variable_int("comparison hits", *c);
-                            asr::timer::set_variable_int("delta hits", self.hits - c);
+                            asr::timer::set_variable("delta hits", &delta_string(self.hits - c));
                         } else {
                             asr::timer::set_variable("comparison hits", DASH);
                             asr::timer::set_variable("delta hits", DASH);
@@ -428,6 +445,7 @@ async fn main() {
     asr::timer::set_variable("pb hits", DASH);
     asr::timer::set_variable("comparison hits", DASH);
     asr::timer::set_variable("delta hits", DASH);
+    asr::timer::set_variable("percent", DASH);
 
     asr::print_message("Hello, World!");
 
@@ -496,6 +514,7 @@ async fn main() {
                     handle_splits(&settings, &mut state, &mem, &gm, &pd, &mut scene_store).await;
                     load_removal(&mut state, &mem, &gm);
                     handle_hits(&settings, &mut state, &mem, &gm, &pd);
+                    handle_percent(&mem, &gm, &pd);
                     next_tick().await;
                 }
             })
@@ -537,6 +556,20 @@ async fn handle_splits(
                         state.timer_state = TimerState::Running;
                         state.split_index = Some(0);
                         state.segment_hits.resize(1, 0);
+                        if settings.get_hit_counter() {
+                            asr::timer::set_variable_int("segment hits", state.segment_hits[0]);
+                            // .first() = .get(0)
+                            if let Some(c) = state.comparison_hits.first() {
+                                asr::timer::set_variable_int("comparison hits", *c);
+                                asr::timer::set_variable(
+                                    "delta hits",
+                                    &delta_string(state.hits - c),
+                                );
+                            } else {
+                                asr::timer::set_variable("comparison hits", DASH);
+                                asr::timer::set_variable("delta hits", DASH);
+                            }
+                        }
                         break;
                     }
                     _ => break,
@@ -571,6 +604,9 @@ async fn handle_splits(
                             asr::timer::set_variable("hits", DASH);
                             asr::timer::set_variable("segment hits", DASH);
                         }
+                        asr::timer::set_variable("comparison hits", DASH);
+                        asr::timer::set_variable("delta hits", DASH);
+                        asr::timer::set_variable("percent", DASH);
                         state.look_for_teleporting = false;
                         state.last_game_state = GAME_STATE_INACTIVE;
                         #[cfg(debug_assertions)]
@@ -591,7 +627,10 @@ async fn handle_splits(
                             asr::timer::set_variable_int("segment hits", state.segment_hits[new_i]);
                             if let Some(c) = state.comparison_hits.get(new_i) {
                                 asr::timer::set_variable_int("comparison hits", *c);
-                                asr::timer::set_variable_int("delta hits", state.hits - c);
+                                asr::timer::set_variable(
+                                    "delta hits",
+                                    &delta_string(state.hits - c),
+                                );
                             } else {
                                 asr::timer::set_variable("comparison hits", DASH);
                                 asr::timer::set_variable("delta hits", DASH);
@@ -611,7 +650,10 @@ async fn handle_splits(
                             asr::timer::set_variable_int("segment hits", state.segment_hits[new_i]);
                             if let Some(c) = state.comparison_hits.get(new_i) {
                                 asr::timer::set_variable_int("comparison hits", *c);
-                                asr::timer::set_variable_int("delta hits", state.hits - c);
+                                asr::timer::set_variable(
+                                    "delta hits",
+                                    &delta_string(state.hits - c),
+                                );
                             } else {
                                 asr::timer::set_variable("comparison hits", DASH);
                                 asr::timer::set_variable("delta hits", DASH);
@@ -635,7 +677,10 @@ async fn handle_splits(
                                 );
                                 if let Some(c) = state.comparison_hits.get(new_i) {
                                     asr::timer::set_variable_int("comparison hits", *c);
-                                    asr::timer::set_variable_int("delta hits", state.hits - c);
+                                    asr::timer::set_variable(
+                                        "delta hits",
+                                        &delta_string(state.hits - c),
+                                    );
                                 } else {
                                     asr::timer::set_variable("comparison hits", DASH);
                                     asr::timer::set_variable("delta hits", DASH);
@@ -818,10 +863,29 @@ fn add_hit(state: &mut AutoSplitterState) {
     state.segment_hits[i] += 1;
     asr::timer::set_variable_int("segment hits", state.segment_hits[i]);
     if let Some(c) = state.comparison_hits.get(i) {
-        asr::timer::set_variable_int("delta hits", state.hits - c);
+        asr::timer::set_variable("delta hits", &delta_string(state.hits - c));
     } else {
         asr::timer::set_variable("delta hits", DASH);
     }
+}
+
+fn handle_percent(mem: &Memory, gm: &GameManagerPointers, pd: &PlayerDataPointers) {
+    // only update percent if timer is running or paused
+    if is_timer_state_between_runs(asr::timer::state()) {
+        return;
+    }
+
+    // only update percent if game state is non-menu
+    let game_state: i32 = mem.deref(&gm.game_state).unwrap_or_default();
+    if !NON_MENU_GAME_STATES.contains(&game_state) {
+        return;
+    }
+
+    let Ok(percent) = mem.deref::<f32, _>(&pd.completion_percentage) else {
+        return;
+    };
+
+    asr::timer::set_variable("percent", &format!("{}%", percent));
 }
 
 // --------------------------------------------------------
@@ -832,4 +896,14 @@ pub fn is_timer_state_between_runs(s: TimerState) -> bool {
 
 pub fn str_take_right(s: &str, n: usize) -> &str {
     s.split_at(s.len().saturating_sub(n)).1
+}
+
+fn delta_string(i: i64) -> String {
+    if i.is_positive() {
+        format!("{}{}", PLUS, i)
+    } else if i.is_negative() {
+        format!("{}{}", MINUS, -i)
+    } else {
+        format!("{}", i)
+    }
 }
