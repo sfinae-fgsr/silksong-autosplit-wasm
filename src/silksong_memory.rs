@@ -49,6 +49,20 @@ static BAD_SCENE_NAMES: [&str; 11] = [
     "material",
 ];
 
+/*
+public enum GameState
+{
+    INACTIVE,
+    MAIN_MENU,
+    LOADING,
+    ENTERING_LEVEL,
+    PLAYING,
+    PAUSED,
+    EXITING_LEVEL,
+    CUTSCENE,
+    PRIMER
+}
+*/
 pub const GAME_STATE_INACTIVE: i32 = 0;
 pub const GAME_STATE_MAIN_MENU: i32 = 1;
 pub const GAME_STATE_LOADING: i32 = 2;
@@ -60,11 +74,33 @@ pub const GAME_STATE_CUTSCENE: i32 = 7;
 
 pub static NON_MENU_GAME_STATES: [i32; 2] = [GAME_STATE_PLAYING, GAME_STATE_CUTSCENE];
 
+/*
+public enum UIState
+{
+    INACTIVE,
+    MAIN_MENU_HOME,
+    LOADING,
+    CUTSCENE,
+    PLAYING,
+    PAUSED,
+    OPTIONS
+}
+*/
 // UI_STATE 1: Main Menu
 pub const UI_STATE_CUTSCENE: i32 = 3;
 pub const UI_STATE_PLAYING: i32 = 4;
 pub const UI_STATE_PAUSED: i32 = 5;
 
+/*
+public enum HeroTransitionState
+{
+    WAITING_TO_TRANSITION,
+    EXITING_SCENE,
+    WAITING_TO_ENTER_LEVEL,
+    ENTERING_SCENE,
+    DROPPING_DOWN
+}
+*/
 // HERO_TRANSITION_STATE 0: N/A, not in transition
 // HERO_TRANSITION_STATE 1: Exiting scene
 // HERO_TRANSITION_STATE 2, 3: Waiting to enter, Entering?
