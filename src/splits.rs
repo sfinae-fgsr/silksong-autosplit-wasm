@@ -1557,9 +1557,12 @@ pub fn continuous_splits(
     if !NON_MENU_GAME_STATES.contains(&game_state) {
         return should_split(false);
     }
+	if *split == Split::ManualSplit {
+		return SplitterAction::ManualSplit;
+	}
     let res = match split {
         // region: Start, End, and Menu
-        Split::ManualSplit => false,
+        Split::ManualSplit => false, // placeholder
         Split::PlayerDeath => mem.deref(&pd.health).is_ok_and(|h: i32| h == 0),
         // endregion: Start, End, and Menu
 
