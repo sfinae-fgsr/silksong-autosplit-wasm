@@ -1292,292 +1292,221 @@ pub fn transition_splits(
     _gm: &GameManagerPointers,
     pd: &PlayerDataPointers,
 ) -> SplitterAction {
-    match split {
+    let res = match split {
         // region: Start, End, and Menu
-        Split::StartNewGame => {
-            should_split(OPENING_SCENES.contains(&scenes.old) && scenes.current == "Tut_01")
-        }
-        Split::EndingSplit => should_split(scenes.current.starts_with("Cinematic_Ending")),
-        Split::EndingA => should_split(scenes.current == "Cinematic_Ending_A"),
-        Split::AnyTransition => should_split(true),
+        Split::StartNewGame => OPENING_SCENES.contains(&scenes.old) && scenes.current == "Tut_01",
+        Split::EndingSplit => scenes.current.starts_with("Cinematic_Ending"),
+        Split::EndingA => scenes.current == "Cinematic_Ending_A",
+        Split::AnyTransition => true,
         // TODO: if there's anything like DreamGate in Silksong,
         // should TransitionExcludingDiscontinuities exclude that too?
-        Split::TransitionExcludingDiscontinuities => should_split(
+        Split::TransitionExcludingDiscontinuities => {
             !(is_debug_save_state_scene(scenes.old)
                 || is_debug_save_state_scene(scenes.current)
-                || mem.deref(&pd.health).is_ok_and(|h: i32| h == 0)),
-        ),
+                || mem.deref(&pd.health).is_ok_and(|h: i32| h == 0))
+        }
         // endregion: Start, End, and Menu
 
         // region: MossLands
-        Split::MossMotherTrans => {
-            should_split(mem.deref(&pd.defeated_moss_mother).unwrap_or_default())
-        }
-        Split::SilkSpearTrans => should_split(mem.deref(&pd.has_needle_throw).unwrap_or_default()),
-        Split::EnterBoneBottom => {
-            should_split(scenes.old != "Bonetown" && scenes.current == "Bonetown")
-        }
-        Split::EnterMosshome => {
-            should_split(scenes.old == "Bone_05" && scenes.current == "Mosstown_01")
-        }
+        Split::MossMotherTrans => mem.deref(&pd.defeated_moss_mother).unwrap_or_default(),
+        Split::SilkSpearTrans => mem.deref(&pd.has_needle_throw).unwrap_or_default(),
+        Split::EnterBoneBottom => scenes.old != "Bonetown" && scenes.current == "Bonetown",
+        Split::EnterMosshome => scenes.old == "Bone_05" && scenes.current == "Mosstown_01",
         // endregion: MossLands
 
         // region: Marrow
-        Split::BellBeastTrans => {
-            should_split(mem.deref(&pd.defeated_bell_beast).unwrap_or_default())
-        }
+        Split::BellBeastTrans => mem.deref(&pd.defeated_bell_beast).unwrap_or_default(),
         // endregion: Marrow
 
         // region: DeepDocks
-        Split::SwiftStepTrans => should_split(mem.deref(&pd.has_dash).unwrap_or_default()),
-        Split::Lace1Trans => should_split(mem.deref(&pd.defeated_lace1).unwrap_or_default()),
+        Split::SwiftStepTrans => mem.deref(&pd.has_dash).unwrap_or_default(),
+        Split::Lace1Trans => mem.deref(&pd.defeated_lace1).unwrap_or_default(),
         // endregion: DeepDocks
 
         // region: Wormways
-        Split::EnterWormways => should_split(
+        Split::EnterWormways => {
             (scenes.old == "Crawl_02" && scenes.current == "Crawl_03b")
-                || (scenes.old == "Aspid_01" && scenes.current == "Crawl_01"),
-        ),
-        Split::EnterUpperWormways => {
-            should_split(scenes.old == "Crawl_03b" && scenes.current == "Crawl_03")
+                || (scenes.old == "Aspid_01" && scenes.current == "Crawl_01")
         }
-        Split::SharpdartTrans => should_split(mem.deref(&pd.has_silk_charge).unwrap_or_default()),
+        Split::EnterUpperWormways => scenes.old == "Crawl_03b" && scenes.current == "Crawl_03",
+        Split::SharpdartTrans => mem.deref(&pd.has_silk_charge).unwrap_or_default(),
         // endregion: Wormways
 
         // region: HuntersMarch
-        Split::EnterHuntersMarch => should_split(
+        Split::EnterHuntersMarch => {
             (scenes.old == "Ant_02" && scenes.current == "Ant_03")
-                || (scenes.old == "Ant_05b" && scenes.current == "Ant_14"),
-        ),
+                || (scenes.old == "Ant_05b" && scenes.current == "Ant_14")
+        }
         Split::HuntersMarchPostMiddleArenaTransition => {
-            should_split(scenes.old == "Ant_04_mid" && scenes.current == "Ant_04")
+            scenes.old == "Ant_04_mid" && scenes.current == "Ant_04"
         }
         // endregion: HuntersMarch
 
         // region: FarFields
-        Split::EnterFarFields => should_split(
-            !scenes.old.starts_with("Bone_East") && scenes.current.starts_with("Bone_East"),
-        ),
-        Split::DriftersCloakTrans => should_split(mem.deref(&pd.has_brolly).unwrap_or_default()),
+        Split::EnterFarFields => {
+            !scenes.old.starts_with("Bone_East") && scenes.current.starts_with("Bone_East")
+        }
+        Split::DriftersCloakTrans => mem.deref(&pd.has_brolly).unwrap_or_default(),
         // endregion: FarFields
 
         // region: Greymoor
-        Split::EnterGreymoor => should_split(
-            !scenes.old.starts_with("Greymoor") && scenes.current.starts_with("Greymoor"),
-        ),
-        Split::MoorwingTrans => should_split(
-            mem.deref(&pd.defeated_vampire_gnat_boss)
-                .unwrap_or_default(),
-        ),
-        Split::ThreadStormTrans => {
-            should_split(mem.deref(&pd.has_thread_sphere).unwrap_or_default())
+        Split::EnterGreymoor => {
+            !scenes.old.starts_with("Greymoor") && scenes.current.starts_with("Greymoor")
         }
+        Split::MoorwingTrans => mem
+            .deref(&pd.defeated_vampire_gnat_boss)
+            .unwrap_or_default(),
+        Split::ThreadStormTrans => mem.deref(&pd.has_thread_sphere).unwrap_or_default(),
         // endregion: Greymoor
 
         // region: Bellhart
-        Split::EnterBellhart => should_split(
+        Split::EnterBellhart => {
             (scenes.old == "Belltown_06"
                 || scenes.old == "Belltown_07"
                 || scenes.old == "Belltown_basement")
-                && scenes.current == "Belltown",
-        ),
+                && scenes.current == "Belltown"
+        }
         // endregion: Bellhart
 
         // region: Shellwood
-        Split::ClingGripTrans => should_split(mem.deref(&pd.has_wall_jump).unwrap_or_default()),
-        Split::EnterShellwood => should_split(
-            !scenes.old.starts_with("Shellwood") && scenes.current.starts_with("Shellwood"),
-        ),
+        Split::ClingGripTrans => mem.deref(&pd.has_wall_jump).unwrap_or_default(),
+        Split::EnterShellwood => {
+            !scenes.old.starts_with("Shellwood") && scenes.current.starts_with("Shellwood")
+        }
         // endregion: Shellwood
 
         // region: BlastedSteps
-        Split::EnterBlastedSteps => {
-            should_split(scenes.old == "Coral_19" && scenes.current == "Coral_02")
-        }
-        Split::NeedleStrikeTrans => {
-            should_split(mem.deref(&pd.has_charge_slash).unwrap_or_default())
-        }
-        Split::EnterLastJudge => {
-            should_split(scenes.old == "Coral_32" && scenes.current == "Coral_Judge_Arena")
-        }
+        Split::EnterBlastedSteps => scenes.old == "Coral_19" && scenes.current == "Coral_02",
+        Split::NeedleStrikeTrans => mem.deref(&pd.has_charge_slash).unwrap_or_default(),
+        Split::EnterLastJudge => scenes.old == "Coral_32" && scenes.current == "Coral_Judge_Arena",
         Split::EnterCitadelFrontGate => {
-            should_split(scenes.old == "Coral_Judge_Arena" && scenes.current == "Coral_10")
+            scenes.old == "Coral_Judge_Arena" && scenes.current == "Coral_10"
         }
         // endregion: BlastedSteps
 
         // region: SinnersRoad
-        Split::EnterSinnersRoad => {
-            should_split(scenes.old == "Greymoor_03" && scenes.current == "Dust_01")
-        }
+        Split::EnterSinnersRoad => scenes.old == "Greymoor_03" && scenes.current == "Dust_01",
         // endregion: SinnersRoad
 
         // region: TheMist
-        Split::EnterMist => should_split(
+        Split::EnterMist => {
             (scenes.old == "Dust_05" || scenes.old == "Shadow_04")
-                && scenes.current == "Dust_Maze_09_entrance",
-        ),
-        Split::MistCrossing => should_split(
-            scenes.old.starts_with("Dust_Maze_0") && scenes.current == "Dust_Maze_crossing",
-        ),
-        Split::LeaveMist => {
-            should_split(scenes.old == "Dust_Maze_Last_Hall" && scenes.current == "Dust_09")
+                && scenes.current == "Dust_Maze_09_entrance"
         }
+        Split::MistCrossing => {
+            scenes.old.starts_with("Dust_Maze_0") && scenes.current == "Dust_Maze_crossing"
+        }
+        Split::LeaveMist => scenes.old == "Dust_Maze_Last_Hall" && scenes.current == "Dust_09",
         // endregion: TheMist
 
         // region: Bilewater
-        Split::EnterBilewater => should_split(
+        Split::EnterBilewater => {
             (scenes.old == "Dust_06" && scenes.current == "Shadow_05")
                 || (scenes.old == "Library_07" && scenes.current == "Shadow_22")
                 || (scenes.old == "Dust_09" && scenes.current == "Shadow_04")
-                || (scenes.old == "Aqueduct_04" && scenes.current == "Shadow_01"),
-        ),
-        Split::EnterExhaustOrgan => {
-            should_split(scenes.old == "Dust_09" && scenes.current == "Organ_01")
+                || (scenes.old == "Aqueduct_04" && scenes.current == "Shadow_01")
         }
-        Split::CrossStitchTrans => should_split(mem.deref(&pd.has_parry).unwrap_or_default()),
+        Split::EnterExhaustOrgan => scenes.old == "Dust_09" && scenes.current == "Organ_01",
+        Split::CrossStitchTrans => mem.deref(&pd.has_parry).unwrap_or_default(),
         // endregion: Bilewater
 
         // region: TheSlab
-        Split::EnterTheSlab => should_split(scenes.old == "Slab_01" && scenes.current == "Slab_02"),
-        Split::EnterFirstSinner => {
-            should_split(scenes.old == "Slab_10c" && scenes.current == "Slab_10b")
-        }
-        Split::RuneRageTrans => should_split(mem.deref(&pd.has_silk_bomb).unwrap_or_default()),
+        Split::EnterTheSlab => scenes.old == "Slab_01" && scenes.current == "Slab_02",
+        Split::EnterFirstSinner => scenes.old == "Slab_10c" && scenes.current == "Slab_10b",
+        Split::RuneRageTrans => mem.deref(&pd.has_silk_bomb).unwrap_or_default(),
         // endregion: TheSlab
 
         // region: MountFay
-        Split::EnterMountFay => {
-            should_split(scenes.old == "Slab_06" && scenes.current == "Peak_01")
-        }
-        Split::EnterBrightvein => {
-            should_split(scenes.old == "Peak_06b" && scenes.current == "Peak_06")
-        }
-        Split::UpperMountFayTrans => {
-            should_split(scenes.old == "Peak_01" && scenes.current == "Peak_07")
-        }
+        Split::EnterMountFay => scenes.old == "Slab_06" && scenes.current == "Peak_01",
+        Split::EnterBrightvein => scenes.old == "Peak_06b" && scenes.current == "Peak_06",
+        Split::UpperMountFayTrans => scenes.old == "Peak_01" && scenes.current == "Peak_07",
         // endregion: MountFay
 
         // region: ChoralChambers
-        Split::TrobbioTrans => should_split(mem.deref(&pd.defeated_trobbio).unwrap_or_default()),
+        Split::TrobbioTrans => mem.deref(&pd.defeated_trobbio).unwrap_or_default(),
         //endregion: ChoralChambers
 
         // region: WhisperingVaults
-        Split::EnterWhisperingVaults => should_split(
+        Split::EnterWhisperingVaults => {
             (scenes.old == "Library_02" && scenes.current == "Library_01")
-                || (scenes.old == "Song_Enclave" && scenes.current == "Library_04"),
-        ),
+                || (scenes.old == "Song_Enclave" && scenes.current == "Library_04")
+        }
         // endregion: WhisperingVaults
 
         // region: HighHalls
-        Split::EnterHighHalls => {
-            should_split(scenes.old == "Hang_01" && scenes.current == "Hang_02")
-        }
-        Split::EnterHighHallsArena => {
-            should_split(scenes.old == "Hang_06" && scenes.current == "Hang_04")
-        }
+        Split::EnterHighHalls => scenes.old == "Hang_01" && scenes.current == "Hang_02",
+        Split::EnterHighHallsArena => scenes.old == "Hang_06" && scenes.current == "Hang_04",
         // endregion: HighHalls
 
         // region: Memorium
-        Split::EnterMemorium => {
-            should_split(scenes.old == "Song_25" && scenes.current == "Arborium_01")
-        }
+        Split::EnterMemorium => scenes.old == "Song_25" && scenes.current == "Arborium_01",
         // endregion: Memorium
 
         // region: PutrifiedDucts
-        Split::EnterPutrifiedDucts => should_split(
+        Split::EnterPutrifiedDucts => {
             (scenes.old == "Arborium_11" && scenes.current == "Aqueduct_01")
-                || (scenes.old == "Aqueduct_04" && scenes.current == "Aqueduct_02"),
-        ),
+                || (scenes.old == "Aqueduct_04" && scenes.current == "Aqueduct_02")
+        }
         // endregion: PutrifiedDucts
 
         // region: TheCradle
-        Split::PaleNailsTrans => {
-            should_split(mem.deref(&pd.has_silk_boss_needle).unwrap_or_default())
-        }
+        Split::PaleNailsTrans => mem.deref(&pd.has_silk_boss_needle).unwrap_or_default(),
         // endregion: TheCradle
 
         // region: ThreefoldMelody
-        Split::VaultkeepersMelodyTrans => {
-            should_split(mem.deref(&pd.has_melody_librarian).unwrap_or_default())
-        }
-        Split::ArchitectsMelodyTrans => {
-            should_split(mem.deref(&pd.has_melody_architect).unwrap_or_default())
-        }
-        Split::ConductorsMelodyTrans => {
-            should_split(mem.deref(&pd.has_melody_conductor).unwrap_or_default())
-        }
+        Split::VaultkeepersMelodyTrans => mem.deref(&pd.has_melody_librarian).unwrap_or_default(),
+        Split::ArchitectsMelodyTrans => mem.deref(&pd.has_melody_architect).unwrap_or_default(),
+        Split::ConductorsMelodyTrans => mem.deref(&pd.has_melody_conductor).unwrap_or_default(),
         // endregion: ThreefoldMelody
 
         // region: Crests
-        Split::ReaperCrestTrans => {
-            should_split(mem.deref(&pd.completed_memory_reaper).unwrap_or_default())
-        }
-        Split::WandererCrestTrans => {
-            should_split(mem.deref(&pd.completed_memory_wanderer).unwrap_or_default())
-        }
-        Split::BeastCrestTrans => {
-            should_split(mem.deref(&pd.completed_memory_beast).unwrap_or_default())
-        }
-        Split::ArchitectCrestTrans => should_split(
-            mem.deref(&pd.completed_memory_toolmaster)
-                .unwrap_or_default(),
-        ),
-        Split::WitchCrestTrans => should_split(
-            mem.deref(&pd.belltown_doctor_cured_curse)
-                .unwrap_or_default(),
-        ),
-        Split::ShamanCrestTrans => {
-            should_split(mem.deref(&pd.completed_memory_shaman).unwrap_or_default())
-        }
-        Split::SylphsongTrans => {
-            should_split(mem.deref(&pd.has_bound_crest_upgrader).unwrap_or_default())
-        }
+        Split::ReaperCrestTrans => mem.deref(&pd.completed_memory_reaper).unwrap_or_default(),
+        Split::WandererCrestTrans => mem.deref(&pd.completed_memory_wanderer).unwrap_or_default(),
+        Split::BeastCrestTrans => mem.deref(&pd.completed_memory_beast).unwrap_or_default(),
+        Split::ArchitectCrestTrans => mem
+            .deref(&pd.completed_memory_toolmaster)
+            .unwrap_or_default(),
+        Split::WitchCrestTrans => mem
+            .deref(&pd.belltown_doctor_cured_curse)
+            .unwrap_or_default(),
+        Split::ShamanCrestTrans => mem.deref(&pd.completed_memory_shaman).unwrap_or_default(),
+        Split::SylphsongTrans => mem.deref(&pd.has_bound_crest_upgrader).unwrap_or_default(),
         // endregion: Crests
 
         // region: MiscTE
-        Split::EnterBellEater => should_split(
-            scenes.old != "Bellway_Centipede_Arena" && scenes.current == "Bellway_Centipede_Arena",
-        ),
-        Split::EnterSeth => {
-            should_split(scenes.old == "Under_27" && scenes.current == "Shellwood_22")
+        Split::EnterBellEater => {
+            scenes.old != "Bellway_Centipede_Arena" && scenes.current == "Bellway_Centipede_Arena"
         }
+        Split::EnterSeth => scenes.old == "Under_27" && scenes.current == "Shellwood_22",
         Split::EnterNylethMemory => {
-            should_split(scenes.old == "Shellwood_11b" && scenes.current == "Shellwood_11b_Memory")
+            scenes.old == "Shellwood_11b" && scenes.current == "Shellwood_11b_Memory"
         }
         Split::EnterKarmelitaMemory => {
-            should_split(scenes.old == "Ant_Queen" && scenes.current == "Memory_Ant_Queen")
+            scenes.old == "Ant_Queen" && scenes.current == "Memory_Ant_Queen"
         }
-        Split::EnterVerdaniaMemory => {
-            should_split(scenes.old == "Clover_01" && scenes.current == "Clover_01b")
-        }
-        Split::EnterVerdaniaCastle => {
-            should_split(scenes.old == "Clover_04b" && scenes.current == "Clover_10")
-        }
+        Split::EnterVerdaniaMemory => scenes.old == "Clover_01" && scenes.current == "Clover_01b",
+        Split::EnterVerdaniaCastle => scenes.old == "Clover_04b" && scenes.current == "Clover_10",
         Split::EnterKhannMemory => {
-            should_split(scenes.old == "Coral_Tower_01" && scenes.current == "Memory_Coral_Tower")
+            scenes.old == "Coral_Tower_01" && scenes.current == "Memory_Coral_Tower"
         }
-        Split::EnterRedMemory => {
-            should_split(scenes.old == "Tut_04" && scenes.current == "Memory_Red")
-        }
+        Split::EnterRedMemory => scenes.old == "Tut_04" && scenes.current == "Memory_Red",
         // endregion: MiscTE
 
         // region: Abyss
-        Split::DivingBellAbyssTrans => should_split(
-            scenes.old == "Room_Diving_Bell"
-                && scenes.current.starts_with("Room_Diving_Bell_Abyss"),
-        ),
-        Split::EnterAbyss => should_split(
-            (scenes.old == "Abyss_03" && scenes.current == "Abyss_02")
-                || (scenes.old == "Abyss_11" && scenes.current == "Abyss_02b"),
-        ),
-        Split::LastDiveTrans => {
-            should_split(scenes.old == "Abyss_05" && scenes.current == "Last_Dive")
+        Split::DivingBellAbyssTrans => {
+            scenes.old == "Room_Diving_Bell" && scenes.current.starts_with("Room_Diving_Bell_Abyss")
         }
+        Split::EnterAbyss => {
+            (scenes.old == "Abyss_03" && scenes.current == "Abyss_02")
+                || (scenes.old == "Abyss_11" && scenes.current == "Abyss_02b")
+        }
+        Split::LastDiveTrans => scenes.old == "Abyss_05" && scenes.current == "Last_Dive",
         // endregion: Abyss
 
         // else
-        _ => should_split(false),
-    }
+        _ => false,
+    };
+    should_split(res)
 }
 
 pub fn transition_once_splits(
@@ -1628,567 +1557,381 @@ pub fn continuous_splits(
     if !NON_MENU_GAME_STATES.contains(&game_state) {
         return should_split(false);
     }
-    match split {
+    let res = match split {
         // region: Start, End, and Menu
-        Split::ManualSplit => SplitterAction::ManualSplit,
-        Split::PlayerDeath => should_split(mem.deref(&pd.health).is_ok_and(|h: i32| h == 0)),
+        Split::ManualSplit => false,
+        Split::PlayerDeath => mem.deref(&pd.health).is_ok_and(|h: i32| h == 0),
         // endregion: Start, End, and Menu
 
         // region: MossLands
-        Split::MossMother => should_split(mem.deref(&pd.defeated_moss_mother).unwrap_or_default()),
-        Split::SilkSpear => should_split(mem.deref(&pd.has_needle_throw).unwrap_or_default()),
-        Split::BoneBottomSimpleKey => {
-            should_split(mem.deref(&pd.has_bonebottom_simple_key).unwrap_or_default())
-        }
+        Split::MossMother => mem.deref(&pd.defeated_moss_mother).unwrap_or_default(),
+        Split::SilkSpear => mem.deref(&pd.has_needle_throw).unwrap_or_default(),
+        Split::BoneBottomSimpleKey => mem.deref(&pd.has_bonebottom_simple_key).unwrap_or_default(),
         // endregion: MossLands
 
         // region: Marrow
-        Split::BellBeast => should_split(mem.deref(&pd.defeated_bell_beast).unwrap_or_default()),
-        Split::MarrowBell => {
-            should_split(mem.deref(&pd.bell_shrine_bone_forest).unwrap_or_default())
-        }
+        Split::BellBeast => mem.deref(&pd.defeated_bell_beast).unwrap_or_default(),
+        Split::MarrowBell => mem.deref(&pd.bell_shrine_bone_forest).unwrap_or_default(),
         // endregion: Marrow
 
         // region: DeepDocks
-        Split::SwiftStep => should_split(mem.deref(&pd.has_dash).unwrap_or_default()),
-        Split::Lace1 => should_split(mem.deref(&pd.defeated_lace1).unwrap_or_default()),
-        Split::DeepDocksBell => should_split(mem.deref(&pd.bell_shrine_wilds).unwrap_or_default()),
+        Split::SwiftStep => mem.deref(&pd.has_dash).unwrap_or_default(),
+        Split::Lace1 => mem.deref(&pd.defeated_lace1).unwrap_or_default(),
+        Split::DeepDocksBell => mem.deref(&pd.bell_shrine_wilds).unwrap_or_default(),
         // endregion: DeepDocks
 
         // region: Wormways
-        Split::Sharpdart => should_split(mem.deref(&pd.has_silk_charge).unwrap_or_default()),
+        Split::Sharpdart => mem.deref(&pd.has_silk_charge).unwrap_or_default(),
         // endregion: Wormways
 
         // region: FarFields
-        Split::DriftersCloak => should_split(mem.deref(&pd.has_brolly).unwrap_or_default()),
-        Split::FourthChorus => should_split(mem.deref(&pd.defeated_song_golem).unwrap_or_default()),
+        Split::DriftersCloak => mem.deref(&pd.has_brolly).unwrap_or_default(),
+        Split::FourthChorus => mem.deref(&pd.defeated_song_golem).unwrap_or_default(),
         Split::GurrTheOutcastEncountered => {
-            should_split(mem.deref(&pd.encountered_ant_trapper).unwrap_or_default())
+            mem.deref(&pd.encountered_ant_trapper).unwrap_or_default()
         }
-        Split::GurrTheOutcast => {
-            should_split(mem.deref(&pd.defeated_ant_trapper).unwrap_or_default())
-        }
+        Split::GurrTheOutcast => mem.deref(&pd.defeated_ant_trapper).unwrap_or_default(),
         // endregion: FarFields
 
         // region: Greymoor
-        Split::GreymoorBell => {
-            should_split(mem.deref(&pd.bell_shrine_greymoor).unwrap_or_default())
-        }
-        Split::Moorwing => should_split(
-            mem.deref(&pd.defeated_vampire_gnat_boss)
-                .unwrap_or_default(),
-        ),
-        Split::ThreadStorm => should_split(mem.deref(&pd.has_thread_sphere).unwrap_or_default()),
+        Split::GreymoorBell => mem.deref(&pd.bell_shrine_greymoor).unwrap_or_default(),
+        Split::Moorwing => mem
+            .deref(&pd.defeated_vampire_gnat_boss)
+            .unwrap_or_default(),
+        Split::ThreadStorm => mem.deref(&pd.has_thread_sphere).unwrap_or_default(),
         // endregion: Greymoor
 
         // region: Shellwood
-        Split::ClingGrip => should_split(mem.deref(&pd.has_wall_jump).unwrap_or_default()),
-        Split::ShellwoodBell => {
-            should_split(mem.deref(&pd.bell_shrine_shellwood).unwrap_or_default())
-        }
+        Split::ClingGrip => mem.deref(&pd.has_wall_jump).unwrap_or_default(),
+        Split::ShellwoodBell => mem.deref(&pd.bell_shrine_shellwood).unwrap_or_default(),
         // endregion: Shellwood
 
         // region: Bellhart
-        Split::Widow => should_split(mem.deref(&pd.spinner_defeated).unwrap_or_default()),
-        Split::BellhartBell => {
-            should_split(mem.deref(&pd.bell_shrine_bellhart).unwrap_or_default())
-        }
+        Split::Widow => mem.deref(&pd.spinner_defeated).unwrap_or_default(),
+        Split::BellhartBell => mem.deref(&pd.bell_shrine_bellhart).unwrap_or_default(),
         // endregion: Bellhart
 
         // region: BlastedSteps
-        Split::NeedleStrike => should_split(mem.deref(&pd.has_charge_slash).unwrap_or_default()),
-        Split::LastJudgeEncountered => {
-            should_split(mem.deref(&pd.encountered_last_judge).unwrap_or_default())
-        }
-        Split::LastJudge => should_split(mem.deref(&pd.defeated_last_judge).unwrap_or_default()),
+        Split::NeedleStrike => mem.deref(&pd.has_charge_slash).unwrap_or_default(),
+        Split::LastJudgeEncountered => mem.deref(&pd.encountered_last_judge).unwrap_or_default(),
+        Split::LastJudge => mem.deref(&pd.defeated_last_judge).unwrap_or_default(),
         // endregion: BlastedSteps
 
         // region: Bilewater
-        Split::Phantom => should_split(mem.deref(&pd.defeated_phantom).unwrap_or_default()),
-        Split::CrossStitch => should_split(mem.deref(&pd.has_parry).unwrap_or_default()),
+        Split::Phantom => mem.deref(&pd.defeated_phantom).unwrap_or_default(),
+        Split::CrossStitch => mem.deref(&pd.has_parry).unwrap_or_default(),
         // endregion: Bilewater
 
         // region: TheSlab
-        Split::SlabKeyIndolent => should_split(mem.deref(&pd.has_slab_key_a).unwrap_or_default()),
-        Split::SlabKeyHeretic => should_split(mem.deref(&pd.has_slab_key_b).unwrap_or_default()),
-        Split::SlabKeyApostate => should_split(mem.deref(&pd.has_slab_key_c).unwrap_or_default()),
+        Split::SlabKeyIndolent => mem.deref(&pd.has_slab_key_a).unwrap_or_default(),
+        Split::SlabKeyHeretic => mem.deref(&pd.has_slab_key_b).unwrap_or_default(),
+        Split::SlabKeyApostate => mem.deref(&pd.has_slab_key_c).unwrap_or_default(),
         Split::FirstSinnerEncountered => {
-            should_split(mem.deref(&pd.encountered_first_weaver).unwrap_or_default())
+            mem.deref(&pd.encountered_first_weaver).unwrap_or_default()
         }
-        Split::FirstSinner => {
-            should_split(mem.deref(&pd.defeated_first_weaver).unwrap_or_default())
-        }
-        Split::RuneRage => should_split(mem.deref(&pd.has_silk_bomb).unwrap_or_default()),
+        Split::FirstSinner => mem.deref(&pd.defeated_first_weaver).unwrap_or_default(),
+        Split::RuneRage => mem.deref(&pd.has_silk_bomb).unwrap_or_default(),
         // endregion: TheSlab
 
         // region: MountFay
-        Split::FaydownCloak => should_split(mem.deref(&pd.has_double_jump).unwrap_or_default()),
+        Split::FaydownCloak => mem.deref(&pd.has_double_jump).unwrap_or_default(),
         // endregion: MountFay
 
         // region: Acts
-        Split::Act2Started => should_split(mem.deref(&pd.act2_started).unwrap_or_default()),
+        Split::Act2Started => mem.deref(&pd.act2_started).unwrap_or_default(),
         // endregion: Acts
 
         // region: CogworkCore
-        Split::CogworkDancers => {
-            should_split(mem.deref(&pd.defeated_cogwork_dancers).unwrap_or_default())
-        }
+        Split::CogworkDancers => mem.deref(&pd.defeated_cogwork_dancers).unwrap_or_default(),
         // endregion: CogworkCore
 
         // region: WhisperingVaults
-        Split::WhisperingVaultsArena => should_split(
-            mem.deref(&pd.completed_library_entry_battle)
-                .unwrap_or_default(),
-        ),
+        Split::WhisperingVaultsArena => mem
+            .deref(&pd.completed_library_entry_battle)
+            .unwrap_or_default(),
         // endregion: WhisperingVaults
 
         // region: ChoralChambers
-        Split::Trobbio => should_split(mem.deref(&pd.defeated_trobbio).unwrap_or_default()),
+        Split::Trobbio => mem.deref(&pd.defeated_trobbio).unwrap_or_default(),
         //endregion: ChoralChambers
 
         // region: Underworks
-        Split::Clawline => should_split(mem.deref(&pd.has_harpoon_dash).unwrap_or_default()),
+        Split::Clawline => mem.deref(&pd.has_harpoon_dash).unwrap_or_default(),
         //endregion: Underworks
 
         // region: HighHalls
-        Split::HighHallsArena => should_split(mem.deref(&pd.hang04_battle).unwrap_or_default()),
+        Split::HighHallsArena => mem.deref(&pd.hang04_battle).unwrap_or_default(),
         //endregion: HighHalls
 
         // region: TheCradle
-        Split::Lace2 => should_split(mem.deref(&pd.defeated_lace_tower).unwrap_or_default()),
-        Split::PaleNails => should_split(mem.deref(&pd.has_silk_boss_needle).unwrap_or_default()),
+        Split::Lace2 => mem.deref(&pd.defeated_lace_tower).unwrap_or_default(),
+        Split::PaleNails => mem.deref(&pd.has_silk_boss_needle).unwrap_or_default(),
         // endregion: TheCradle
 
         // region: ThreefoldMelody
-        Split::VaultkeepersMelody => {
-            should_split(mem.deref(&pd.has_melody_librarian).unwrap_or_default())
-        }
-        Split::ArchitectsMelody => {
-            should_split(mem.deref(&pd.has_melody_architect).unwrap_or_default())
-        }
-        Split::ConductorsMelody => {
-            should_split(mem.deref(&pd.has_melody_conductor).unwrap_or_default())
-        }
-        Split::UnlockedMelodyLift => {
-            should_split(mem.deref(&pd.unlocked_melody_lift).unwrap_or_default())
-        }
+        Split::VaultkeepersMelody => mem.deref(&pd.has_melody_librarian).unwrap_or_default(),
+        Split::ArchitectsMelody => mem.deref(&pd.has_melody_architect).unwrap_or_default(),
+        Split::ConductorsMelody => mem.deref(&pd.has_melody_conductor).unwrap_or_default(),
+        Split::UnlockedMelodyLift => mem.deref(&pd.unlocked_melody_lift).unwrap_or_default(),
         // endregion: ThreefoldMelody
 
         // region: NeedleUpgrade
-        Split::NeedleUpgrade1 => {
-            should_split(mem.deref(&pd.nail_upgrades).is_ok_and(|n: i32| n >= 1))
-        }
-        Split::NeedleUpgrade2 => {
-            should_split(mem.deref(&pd.nail_upgrades).is_ok_and(|n: i32| n >= 2))
-        }
-        Split::NeedleUpgrade3 => {
-            should_split(mem.deref(&pd.nail_upgrades).is_ok_and(|n: i32| n >= 3))
-        }
-        Split::NeedleUpgrade4 => {
-            should_split(mem.deref(&pd.nail_upgrades).is_ok_and(|n: i32| n >= 4))
-        }
+        Split::NeedleUpgrade1 => mem.deref(&pd.nail_upgrades).is_ok_and(|n: i32| n >= 1),
+        Split::NeedleUpgrade2 => mem.deref(&pd.nail_upgrades).is_ok_and(|n: i32| n >= 2),
+        Split::NeedleUpgrade3 => mem.deref(&pd.nail_upgrades).is_ok_and(|n: i32| n >= 3),
+        Split::NeedleUpgrade4 => mem.deref(&pd.nail_upgrades).is_ok_and(|n: i32| n >= 4),
         // endregion: NeedleUpgrade
 
         // region: MaskShards
-        Split::MaskShard1 => should_split(mask_shard_split(mem, pd, 1)),
-        Split::MaskShard2 => should_split(mask_shard_split(mem, pd, 2)),
-        Split::MaskShard3 => should_split(mask_shard_split(mem, pd, 3)),
-        Split::Mask1 => should_split(mask_shard_split(mem, pd, 4)),
-        Split::MaskShard5 => should_split(mask_shard_split(mem, pd, 5)),
-        Split::MaskShard6 => should_split(mask_shard_split(mem, pd, 6)),
-        Split::MaskShard7 => should_split(mask_shard_split(mem, pd, 7)),
-        Split::Mask2 => should_split(mask_shard_split(mem, pd, 8)),
-        Split::MaskShard9 => should_split(mask_shard_split(mem, pd, 9)),
-        Split::MaskShard10 => should_split(mask_shard_split(mem, pd, 10)),
-        Split::MaskShard11 => should_split(mask_shard_split(mem, pd, 11)),
-        Split::Mask3 => should_split(mask_shard_split(mem, pd, 12)),
-        Split::MaskShard13 => should_split(mask_shard_split(mem, pd, 13)),
-        Split::MaskShard14 => should_split(mask_shard_split(mem, pd, 14)),
-        Split::MaskShard15 => should_split(mask_shard_split(mem, pd, 15)),
-        Split::Mask4 => should_split(mask_shard_split(mem, pd, 16)),
-        Split::MaskShard17 => should_split(mask_shard_split(mem, pd, 17)),
-        Split::MaskShard18 => should_split(mask_shard_split(mem, pd, 18)),
-        Split::MaskShard19 => should_split(mask_shard_split(mem, pd, 19)),
-        Split::Mask5 => should_split(mask_shard_split(mem, pd, 20)),
+        Split::MaskShard1 => mask_shard_split(mem, pd, 1),
+        Split::MaskShard2 => mask_shard_split(mem, pd, 2),
+        Split::MaskShard3 => mask_shard_split(mem, pd, 3),
+        Split::Mask1 => mask_shard_split(mem, pd, 4),
+        Split::MaskShard5 => mask_shard_split(mem, pd, 5),
+        Split::MaskShard6 => mask_shard_split(mem, pd, 6),
+        Split::MaskShard7 => mask_shard_split(mem, pd, 7),
+        Split::Mask2 => mask_shard_split(mem, pd, 8),
+        Split::MaskShard9 => mask_shard_split(mem, pd, 9),
+        Split::MaskShard10 => mask_shard_split(mem, pd, 10),
+        Split::MaskShard11 => mask_shard_split(mem, pd, 11),
+        Split::Mask3 => mask_shard_split(mem, pd, 12),
+        Split::MaskShard13 => mask_shard_split(mem, pd, 13),
+        Split::MaskShard14 => mask_shard_split(mem, pd, 14),
+        Split::MaskShard15 => mask_shard_split(mem, pd, 15),
+        Split::Mask4 => mask_shard_split(mem, pd, 16),
+        Split::MaskShard17 => mask_shard_split(mem, pd, 17),
+        Split::MaskShard18 => mask_shard_split(mem, pd, 18),
+        Split::MaskShard19 => mask_shard_split(mem, pd, 19),
+        Split::Mask5 => mask_shard_split(mem, pd, 20),
         // endregion: MaskShards
 
         // region: SpoolFragments
-        Split::SpoolFragment1 => should_split(
+        Split::SpoolFragment1 => {
             mem.deref(&pd.silk_max).is_ok_and(|n: i32| n == 9)
-                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 1),
-        ),
-        Split::Spool1 => should_split(
+                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 1)
+        }
+        Split::Spool1 => {
             mem.deref(&pd.silk_max).is_ok_and(|n: i32| n == 10)
-                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 0),
-        ),
-        Split::SpoolFragment3 => should_split(
+                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 0)
+        }
+        Split::SpoolFragment3 => {
             mem.deref(&pd.silk_max).is_ok_and(|n: i32| n == 10)
-                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 1),
-        ),
-        Split::Spool2 => should_split(
+                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 1)
+        }
+        Split::Spool2 => {
             mem.deref(&pd.silk_max).is_ok_and(|n: i32| n == 11)
-                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 0),
-        ),
-        Split::SpoolFragment5 => should_split(
+                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 0)
+        }
+        Split::SpoolFragment5 => {
             mem.deref(&pd.silk_max).is_ok_and(|n: i32| n == 11)
-                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 1),
-        ),
-        Split::Spool3 => should_split(
+                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 1)
+        }
+        Split::Spool3 => {
             mem.deref(&pd.silk_max).is_ok_and(|n: i32| n == 12)
-                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 0),
-        ),
-        Split::SpoolFragment7 => should_split(
+                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 0)
+        }
+        Split::SpoolFragment7 => {
             mem.deref(&pd.silk_max).is_ok_and(|n: i32| n == 12)
-                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 1),
-        ),
-        Split::Spool4 => should_split(
+                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 1)
+        }
+        Split::Spool4 => {
             mem.deref(&pd.silk_max).is_ok_and(|n: i32| n == 13)
-                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 0),
-        ),
-        Split::SpoolFragment9 => should_split(
+                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 0)
+        }
+        Split::SpoolFragment9 => {
             mem.deref(&pd.silk_max).is_ok_and(|n: i32| n == 13)
-                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 1),
-        ),
-        Split::Spool5 => should_split(
+                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 1)
+        }
+        Split::Spool5 => {
             mem.deref(&pd.silk_max).is_ok_and(|n: i32| n == 14)
-                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 0),
-        ),
-        Split::SpoolFragment11 => should_split(
+                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 0)
+        }
+        Split::SpoolFragment11 => {
             mem.deref(&pd.silk_max).is_ok_and(|n: i32| n == 14)
-                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 1),
-        ),
-        Split::Spool6 => should_split(
+                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 1)
+        }
+        Split::Spool6 => {
             mem.deref(&pd.silk_max).is_ok_and(|n: i32| n == 15)
-                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 0),
-        ),
-        Split::SpoolFragment13 => should_split(
+                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 0)
+        }
+        Split::SpoolFragment13 => {
             mem.deref(&pd.silk_max).is_ok_and(|n: i32| n == 15)
-                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 1),
-        ),
-        Split::Spool7 => should_split(
+                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 1)
+        }
+        Split::Spool7 => {
             mem.deref(&pd.silk_max).is_ok_and(|n: i32| n == 16)
-                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 0),
-        ),
-        Split::SpoolFragment15 => should_split(
+                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 0)
+        }
+        Split::SpoolFragment15 => {
             mem.deref(&pd.silk_max).is_ok_and(|n: i32| n == 16)
-                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 1),
-        ),
-        Split::Spool8 => should_split(
+                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 1)
+        }
+        Split::Spool8 => {
             mem.deref(&pd.silk_max).is_ok_and(|n: i32| n == 17)
-                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 0),
-        ),
-        Split::SpoolFragment17 => should_split(
+                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 0)
+        }
+        Split::SpoolFragment17 => {
             mem.deref(&pd.silk_max).is_ok_and(|n: i32| n == 17)
-                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 1),
-        ),
-        Split::Spool9 => should_split(
+                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 1)
+        }
+        Split::Spool9 => {
             mem.deref(&pd.silk_max).is_ok_and(|n: i32| n == 18)
-                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 0),
-        ),
+                && mem.deref(&pd.silk_spool_parts).is_ok_and(|n: i32| n == 0)
+        }
         // endregion SpoolFragments
 
         // region: ToolPouchLevels
-        Split::ToolPouch1 => should_split(
-            mem.deref(&pd.tool_pouch_upgrades)
-                .is_ok_and(|n: i32| n == 1),
-        ),
-        Split::ToolPouch2 => should_split(
-            mem.deref(&pd.tool_pouch_upgrades)
-                .is_ok_and(|n: i32| n == 2),
-        ),
-        Split::ToolPouch3 => should_split(
-            mem.deref(&pd.tool_pouch_upgrades)
-                .is_ok_and(|n: i32| n == 3),
-        ),
-        Split::ToolPouch4 => should_split(
-            mem.deref(&pd.tool_pouch_upgrades)
-                .is_ok_and(|n: i32| n == 4),
-        ),
+        Split::ToolPouch1 => mem
+            .deref(&pd.tool_pouch_upgrades)
+            .is_ok_and(|n: i32| n == 1),
+        Split::ToolPouch2 => mem
+            .deref(&pd.tool_pouch_upgrades)
+            .is_ok_and(|n: i32| n == 2),
+        Split::ToolPouch3 => mem
+            .deref(&pd.tool_pouch_upgrades)
+            .is_ok_and(|n: i32| n == 3),
+        Split::ToolPouch4 => mem
+            .deref(&pd.tool_pouch_upgrades)
+            .is_ok_and(|n: i32| n == 4),
         // endregion: ToolPouchLevels
 
         // region: CraftingKitLevels
-        Split::CraftingKit1 => {
-            should_split(mem.deref(&pd.tool_kit_upgrades).is_ok_and(|n: i32| n == 1))
-        }
-        Split::CraftingKit2 => {
-            should_split(mem.deref(&pd.tool_kit_upgrades).is_ok_and(|n: i32| n == 2))
-        }
-        Split::CraftingKit3 => {
-            should_split(mem.deref(&pd.tool_kit_upgrades).is_ok_and(|n: i32| n == 3))
-        }
-        Split::CraftingKit4 => {
-            should_split(mem.deref(&pd.tool_kit_upgrades).is_ok_and(|n: i32| n == 4))
-        }
+        Split::CraftingKit1 => mem.deref(&pd.tool_kit_upgrades).is_ok_and(|n: i32| n == 1),
+        Split::CraftingKit2 => mem.deref(&pd.tool_kit_upgrades).is_ok_and(|n: i32| n == 2),
+        Split::CraftingKit3 => mem.deref(&pd.tool_kit_upgrades).is_ok_and(|n: i32| n == 3),
+        Split::CraftingKit4 => mem.deref(&pd.tool_kit_upgrades).is_ok_and(|n: i32| n == 4),
         // endregion: CraftingKitLevels
 
         // region: Crests
-        Split::ReaperCrest => {
-            should_split(mem.deref(&pd.completed_memory_reaper).unwrap_or_default())
-        }
-        Split::WandererCrest => {
-            should_split(mem.deref(&pd.completed_memory_wanderer).unwrap_or_default())
-        }
-        Split::BeastCrest => {
-            should_split(mem.deref(&pd.completed_memory_beast).unwrap_or_default())
-        }
-        Split::ArchitectCrest => should_split(
-            mem.deref(&pd.completed_memory_toolmaster)
-                .unwrap_or_default(),
-        ),
-        Split::CurseCrest => {
-            should_split(mem.deref(&pd.completed_memory_witch).unwrap_or_default())
-        }
-        Split::GainedCurse => should_split(mem.deref(&pd.gained_curse).unwrap_or_default()),
-        Split::WitchCrest => should_split(
-            mem.deref(&pd.belltown_doctor_cured_curse)
-                .unwrap_or_default(),
-        ),
-        Split::ShamanCrest => {
-            should_split(mem.deref(&pd.completed_memory_shaman).unwrap_or_default())
-        }
-        Split::Sylphsong => {
-            should_split(mem.deref(&pd.has_bound_crest_upgrader).unwrap_or_default())
-        }
+        Split::ReaperCrest => mem.deref(&pd.completed_memory_reaper).unwrap_or_default(),
+        Split::WandererCrest => mem.deref(&pd.completed_memory_wanderer).unwrap_or_default(),
+        Split::BeastCrest => mem.deref(&pd.completed_memory_beast).unwrap_or_default(),
+        Split::ArchitectCrest => mem
+            .deref(&pd.completed_memory_toolmaster)
+            .unwrap_or_default(),
+        Split::CurseCrest => mem.deref(&pd.completed_memory_witch).unwrap_or_default(),
+        Split::GainedCurse => mem.deref(&pd.gained_curse).unwrap_or_default(),
+        Split::WitchCrest => mem
+            .deref(&pd.belltown_doctor_cured_curse)
+            .unwrap_or_default(),
+        Split::ShamanCrest => mem.deref(&pd.completed_memory_shaman).unwrap_or_default(),
+        Split::Sylphsong => mem.deref(&pd.has_bound_crest_upgrader).unwrap_or_default(),
         // endregion: Crests
 
         // region: FleaSpecific
-        Split::SavedFleaHuntersMarch => {
-            should_split(mem.deref(&pd.savedflea_ant_03).unwrap_or_default())
-        }
-        Split::SavedFleaBellhart => {
-            should_split(mem.deref(&pd.savedflea_belltown_04).unwrap_or_default())
-        }
-        Split::SavedFleaMarrow => {
-            should_split(mem.deref(&pd.savedflea_bone_06).unwrap_or_default())
-        }
+        Split::SavedFleaHuntersMarch => mem.deref(&pd.savedflea_ant_03).unwrap_or_default(),
+        Split::SavedFleaBellhart => mem.deref(&pd.savedflea_belltown_04).unwrap_or_default(),
+        Split::SavedFleaMarrow => mem.deref(&pd.savedflea_bone_06).unwrap_or_default(),
         Split::SavedFleaDeepDocksSprint => {
-            should_split(mem.deref(&pd.savedflea_bone_east_05).unwrap_or_default())
+            mem.deref(&pd.savedflea_bone_east_05).unwrap_or_default()
         }
-        Split::SavedFleaFarFieldsPilgrimsRest => should_split(
-            mem.deref(&pd.savedflea_bone_east_10_church)
-                .unwrap_or_default(),
-        ),
-        Split::SavedFleaFarFieldsTrap => {
-            should_split(mem.deref(&pd.savedflea_bone_east_17b).unwrap_or_default())
-        }
-        Split::SavedFleaSandsOfKarak => {
-            should_split(mem.deref(&pd.savedflea_coral_24).unwrap_or_default())
-        }
-        Split::SavedFleaBlastedSteps => {
-            should_split(mem.deref(&pd.savedflea_coral_35).unwrap_or_default())
-        }
-        Split::SavedFleaWormways => {
-            should_split(mem.deref(&pd.savedflea_crawl_06).unwrap_or_default())
-        }
-        Split::SavedFleaDeepDocksArena => {
-            should_split(mem.deref(&pd.savedflea_dock_03d).unwrap_or_default())
-        }
-        Split::SavedFleaDeepDocksBellway => {
-            should_split(mem.deref(&pd.savedflea_dock_16).unwrap_or_default())
-        }
-        Split::SavedFleaBilewaterOrgan => {
-            should_split(mem.deref(&pd.savedflea_dust_09).unwrap_or_default())
-        }
-        Split::SavedFleaSinnersRoad => {
-            should_split(mem.deref(&pd.savedflea_dust_12).unwrap_or_default())
-        }
-        Split::SavedFleaGreymoorRoof => {
-            should_split(mem.deref(&pd.savedflea_greymoor_06).unwrap_or_default())
-        }
-        Split::SavedFleaGreymoorLake => {
-            should_split(mem.deref(&pd.savedflea_greymoor_15b).unwrap_or_default())
-        }
-        Split::SavedFleaWhisperingVaults => {
-            should_split(mem.deref(&pd.savedflea_library_01).unwrap_or_default())
-        }
-        Split::SavedFleaSongclave => {
-            should_split(mem.deref(&pd.savedflea_library_09).unwrap_or_default())
-        }
-        Split::SavedFleaMountFay => {
-            should_split(mem.deref(&pd.savedflea_peak_05c).unwrap_or_default())
-        }
-        Split::SavedFleaBilewaterTrap => {
-            should_split(mem.deref(&pd.savedflea_shadow_10).unwrap_or_default())
-        }
-        Split::SavedFleaBilewaterThieves => {
-            should_split(mem.deref(&pd.savedflea_shadow_28).unwrap_or_default())
-        }
-        Split::SavedFleaShellwood => {
-            should_split(mem.deref(&pd.savedflea_shellwood_03).unwrap_or_default())
-        }
-        Split::SavedFleaSlabBellway => {
-            should_split(mem.deref(&pd.savedflea_slab_06).unwrap_or_default())
-        }
-        Split::SavedFleaSlabCage => {
-            should_split(mem.deref(&pd.savedflea_slab_cell).unwrap_or_default())
-        }
-        Split::SavedFleaChoralChambersWind => {
-            should_split(mem.deref(&pd.savedflea_song_11).unwrap_or_default())
-        }
-        Split::SavedFleaChoralChambersCage => {
-            should_split(mem.deref(&pd.savedflea_song_14).unwrap_or_default())
-        }
-        Split::SavedFleaUnderworksCauldron => {
-            should_split(mem.deref(&pd.savedflea_under_21).unwrap_or_default())
-        }
+        Split::SavedFleaFarFieldsPilgrimsRest => mem
+            .deref(&pd.savedflea_bone_east_10_church)
+            .unwrap_or_default(),
+        Split::SavedFleaFarFieldsTrap => mem.deref(&pd.savedflea_bone_east_17b).unwrap_or_default(),
+        Split::SavedFleaSandsOfKarak => mem.deref(&pd.savedflea_coral_24).unwrap_or_default(),
+        Split::SavedFleaBlastedSteps => mem.deref(&pd.savedflea_coral_35).unwrap_or_default(),
+        Split::SavedFleaWormways => mem.deref(&pd.savedflea_crawl_06).unwrap_or_default(),
+        Split::SavedFleaDeepDocksArena => mem.deref(&pd.savedflea_dock_03d).unwrap_or_default(),
+        Split::SavedFleaDeepDocksBellway => mem.deref(&pd.savedflea_dock_16).unwrap_or_default(),
+        Split::SavedFleaBilewaterOrgan => mem.deref(&pd.savedflea_dust_09).unwrap_or_default(),
+        Split::SavedFleaSinnersRoad => mem.deref(&pd.savedflea_dust_12).unwrap_or_default(),
+        Split::SavedFleaGreymoorRoof => mem.deref(&pd.savedflea_greymoor_06).unwrap_or_default(),
+        Split::SavedFleaGreymoorLake => mem.deref(&pd.savedflea_greymoor_15b).unwrap_or_default(),
+        Split::SavedFleaWhisperingVaults => mem.deref(&pd.savedflea_library_01).unwrap_or_default(),
+        Split::SavedFleaSongclave => mem.deref(&pd.savedflea_library_09).unwrap_or_default(),
+        Split::SavedFleaMountFay => mem.deref(&pd.savedflea_peak_05c).unwrap_or_default(),
+        Split::SavedFleaBilewaterTrap => mem.deref(&pd.savedflea_shadow_10).unwrap_or_default(),
+        Split::SavedFleaBilewaterThieves => mem.deref(&pd.savedflea_shadow_28).unwrap_or_default(),
+        Split::SavedFleaShellwood => mem.deref(&pd.savedflea_shellwood_03).unwrap_or_default(),
+        Split::SavedFleaSlabBellway => mem.deref(&pd.savedflea_slab_06).unwrap_or_default(),
+        Split::SavedFleaSlabCage => mem.deref(&pd.savedflea_slab_cell).unwrap_or_default(),
+        Split::SavedFleaChoralChambersWind => mem.deref(&pd.savedflea_song_11).unwrap_or_default(),
+        Split::SavedFleaChoralChambersCage => mem.deref(&pd.savedflea_song_14).unwrap_or_default(),
+        Split::SavedFleaUnderworksCauldron => mem.deref(&pd.savedflea_under_21).unwrap_or_default(),
         Split::SavedFleaUnderworksWispThicket => {
-            should_split(mem.deref(&pd.savedflea_under_23).unwrap_or_default())
+            mem.deref(&pd.savedflea_under_23).unwrap_or_default()
         }
-        Split::SavedFleaGiantFlea => {
-            should_split(mem.deref(&pd.tamed_giant_flea).unwrap_or_default())
-        }
-        Split::SavedFleaVog => {
-            should_split(mem.deref(&pd.met_troupe_hunter_wild).unwrap_or_default())
-        }
-        Split::SavedFleaKratt => {
-            should_split(mem.deref(&pd.caravan_lech_saved).unwrap_or_default())
-        }
+        Split::SavedFleaGiantFlea => mem.deref(&pd.tamed_giant_flea).unwrap_or_default(),
+        Split::SavedFleaVog => mem.deref(&pd.met_troupe_hunter_wild).unwrap_or_default(),
+        Split::SavedFleaKratt => mem.deref(&pd.caravan_lech_saved).unwrap_or_default(),
         // endregion: FleaSpecific
 
         // region: Stations (Bellway)
         Split::PutrifiedDuctsStation => {
-            should_split(mem.deref(&pd.unlocked_aqueduct_station).unwrap_or_default())
+            mem.deref(&pd.unlocked_aqueduct_station).unwrap_or_default()
         }
-        Split::BellhartStation => {
-            should_split(mem.deref(&pd.unlocked_belltown_station).unwrap_or_default())
-        }
-        Split::FarFieldsStation => should_split(
-            mem.deref(&pd.unlocked_boneforest_east_station)
-                .unwrap_or_default(),
-        ),
-        Split::GrandBellwayStation => {
-            should_split(mem.deref(&pd.unlocked_city_station).unwrap_or_default())
-        }
-        Split::BlastedStepsStation => should_split(
-            mem.deref(&pd.unlocked_coral_tower_station)
-                .unwrap_or_default(),
-        ),
-        Split::DeepDocksStation => {
-            should_split(mem.deref(&pd.unlocked_docks_station).unwrap_or_default())
-        }
-        Split::GreymoorStation => {
-            should_split(mem.deref(&pd.unlocked_greymoor_station).unwrap_or_default())
-        }
-        Split::SlabStation => {
-            should_split(mem.deref(&pd.unlocked_peak_station).unwrap_or_default())
-        }
-        Split::BilewaterStation => {
-            should_split(mem.deref(&pd.unlocked_shadow_station).unwrap_or_default())
-        }
-        Split::ShellwoodStation => should_split(
-            mem.deref(&pd.unlocked_shellwood_station)
-                .unwrap_or_default(),
-        ),
+        Split::BellhartStation => mem.deref(&pd.unlocked_belltown_station).unwrap_or_default(),
+        Split::FarFieldsStation => mem
+            .deref(&pd.unlocked_boneforest_east_station)
+            .unwrap_or_default(),
+        Split::GrandBellwayStation => mem.deref(&pd.unlocked_city_station).unwrap_or_default(),
+        Split::BlastedStepsStation => mem
+            .deref(&pd.unlocked_coral_tower_station)
+            .unwrap_or_default(),
+        Split::DeepDocksStation => mem.deref(&pd.unlocked_docks_station).unwrap_or_default(),
+        Split::GreymoorStation => mem.deref(&pd.unlocked_greymoor_station).unwrap_or_default(),
+        Split::SlabStation => mem.deref(&pd.unlocked_peak_station).unwrap_or_default(),
+        Split::BilewaterStation => mem.deref(&pd.unlocked_shadow_station).unwrap_or_default(),
+        Split::ShellwoodStation => mem
+            .deref(&pd.unlocked_shellwood_station)
+            .unwrap_or_default(),
         // endregion: Stations (Bellway)
 
         // region: Ventricas
-        Split::ChoralChambersTube => {
-            should_split(mem.deref(&pd.unlocked_song_tube).unwrap_or_default())
-        }
-        Split::UnderworksTube => {
-            should_split(mem.deref(&pd.unlocked_under_tube).unwrap_or_default())
-        }
-        Split::GrandBellwayTube => should_split(
-            mem.deref(&pd.unlocked_city_bellway_tube)
-                .unwrap_or_default(),
-        ),
-        Split::HighHallsTube => should_split(mem.deref(&pd.unlocked_hang_tube).unwrap_or_default()),
-        Split::SongclaveTube => {
-            should_split(mem.deref(&pd.unlocked_enclave_tube).unwrap_or_default())
-        }
-        Split::MemoriumTube => {
-            should_split(mem.deref(&pd.unlocked_arborium_tube).unwrap_or_default())
-        }
+        Split::ChoralChambersTube => mem.deref(&pd.unlocked_song_tube).unwrap_or_default(),
+        Split::UnderworksTube => mem.deref(&pd.unlocked_under_tube).unwrap_or_default(),
+        Split::GrandBellwayTube => mem
+            .deref(&pd.unlocked_city_bellway_tube)
+            .unwrap_or_default(),
+        Split::HighHallsTube => mem.deref(&pd.unlocked_hang_tube).unwrap_or_default(),
+        Split::SongclaveTube => mem.deref(&pd.unlocked_enclave_tube).unwrap_or_default(),
+        Split::MemoriumTube => mem.deref(&pd.unlocked_arborium_tube).unwrap_or_default(),
         // endregion: Ventricas
 
         // region: ShakraEncounters
-        Split::SeenShakraBonebottom => {
-            should_split(mem.deref(&pd.seen_mapper_bonetown).unwrap_or_default())
-        }
-        Split::SeenShakraMarrow => {
-            should_split(mem.deref(&pd.seen_mapper_bone_forest).unwrap_or_default())
-        }
-        Split::SeenShakraDeepDocks => {
-            should_split(mem.deref(&pd.seen_mapper_docks).unwrap_or_default())
-        }
-        Split::SeenShakraFarFields => {
-            should_split(mem.deref(&pd.seen_mapper_wilds).unwrap_or_default())
-        }
-        Split::SeenShakraWormways => {
-            should_split(mem.deref(&pd.seen_mapper_crawl).unwrap_or_default())
-        }
-        Split::SeenShakraGreymoor => {
-            should_split(mem.deref(&pd.seen_mapper_greymoor).unwrap_or_default())
-        }
-        Split::SeenShakraBellhart => {
-            should_split(mem.deref(&pd.seen_mapper_bellhart).unwrap_or_default())
-        }
-        Split::SeenShakraShellwood => {
-            should_split(mem.deref(&pd.seen_mapper_shellwood).unwrap_or_default())
-        }
+        Split::SeenShakraBonebottom => mem.deref(&pd.seen_mapper_bonetown).unwrap_or_default(),
+        Split::SeenShakraMarrow => mem.deref(&pd.seen_mapper_bone_forest).unwrap_or_default(),
+        Split::SeenShakraDeepDocks => mem.deref(&pd.seen_mapper_docks).unwrap_or_default(),
+        Split::SeenShakraFarFields => mem.deref(&pd.seen_mapper_wilds).unwrap_or_default(),
+        Split::SeenShakraWormways => mem.deref(&pd.seen_mapper_crawl).unwrap_or_default(),
+        Split::SeenShakraGreymoor => mem.deref(&pd.seen_mapper_greymoor).unwrap_or_default(),
+        Split::SeenShakraBellhart => mem.deref(&pd.seen_mapper_bellhart).unwrap_or_default(),
+        Split::SeenShakraShellwood => mem.deref(&pd.seen_mapper_shellwood).unwrap_or_default(),
         Split::SeenShakraHuntersMarch => {
-            should_split(mem.deref(&pd.seen_mapper_hunters_nest).unwrap_or_default())
+            mem.deref(&pd.seen_mapper_hunters_nest).unwrap_or_default()
         }
-        Split::SeenShakraBlastedSteps => {
-            should_split(mem.deref(&pd.seen_mapper_judge_steps).unwrap_or_default())
-        }
-        Split::SeenShakraSinnersRoad => {
-            should_split(mem.deref(&pd.seen_mapper_dustpens).unwrap_or_default())
-        }
-        Split::SeenShakraMountFay => {
-            should_split(mem.deref(&pd.seen_mapper_peak).unwrap_or_default())
-        }
-        Split::SeenShakraBilewater => {
-            should_split(mem.deref(&pd.seen_mapper_shadow).unwrap_or_default())
-        }
+        Split::SeenShakraBlastedSteps => mem.deref(&pd.seen_mapper_judge_steps).unwrap_or_default(),
+        Split::SeenShakraSinnersRoad => mem.deref(&pd.seen_mapper_dustpens).unwrap_or_default(),
+        Split::SeenShakraMountFay => mem.deref(&pd.seen_mapper_peak).unwrap_or_default(),
+        Split::SeenShakraBilewater => mem.deref(&pd.seen_mapper_shadow).unwrap_or_default(),
         Split::SeenShakraSandsOfKarak => {
-            should_split(mem.deref(&pd.seen_mapper_coral_caverns).unwrap_or_default())
+            mem.deref(&pd.seen_mapper_coral_caverns).unwrap_or_default()
         }
         // endregion: ShakraEncounters
 
         // region: MiscTE
-        Split::MetJubilanaEnclave => {
-            should_split(mem.deref(&pd.met_city_merchant_enclave).unwrap_or_default())
-        }
-        Split::MetShermaEnclave => {
-            should_split(mem.deref(&pd.met_sherma_enclave).unwrap_or_default())
-        }
-        Split::UnlockedPrinceCage => {
-            should_split(mem.deref(&pd.unlocked_dust_cage).unwrap_or_default())
-        }
-        Split::GreenPrinceInVerdania => should_split(
-            mem.deref(&pd.green_prince_location)
-                .is_ok_and(|n: i32| n == 3),
-        ),
-        Split::SeenFleatopiaEmpty => {
-            should_split(mem.deref(&pd.seen_fleatopia_empty).unwrap_or_default())
-        }
-        Split::BeastlingCall => {
-            should_split(mem.deref(&pd.has_fast_travel_teleport).unwrap_or_default())
-        }
-        Split::SilkSoar => should_split(mem.deref(&pd.has_super_jump).unwrap_or_default()),
-        Split::ElegyOfTheDeep => should_split(
-            mem.deref(&pd.has_needolin_memory_powerup)
-                .unwrap_or_default(),
-        ),
-        Split::HeartNyleth => {
-            should_split(mem.deref(&pd.collected_heart_flower).unwrap_or_default())
-        }
-        Split::HeartKhann => should_split(mem.deref(&pd.collected_heart_coral).unwrap_or_default()),
-        Split::HeartKarmelita => {
-            should_split(mem.deref(&pd.collected_heart_hunter).unwrap_or_default())
-        }
-        Split::HeartClover => {
-            should_split(mem.deref(&pd.collected_heart_clover).unwrap_or_default())
-        }
-        Split::RedMemory => should_split(mem.deref(&pd.completed_red_memory).unwrap_or_default()),
-        Split::BellhouseKeyConversation => should_split(
-            mem.deref(&pd.belltown_greeter_house_full_dlg)
-                .unwrap_or_default(),
-        ),
-        Split::VerdaniaLakeFountainOrbs => {
-            should_split(mem.deref(&pd.summoned_lake_orbs).unwrap_or_default())
-        }
+        Split::MetJubilanaEnclave => mem.deref(&pd.met_city_merchant_enclave).unwrap_or_default(),
+        Split::MetShermaEnclave => mem.deref(&pd.met_sherma_enclave).unwrap_or_default(),
+        Split::UnlockedPrinceCage => mem.deref(&pd.unlocked_dust_cage).unwrap_or_default(),
+        Split::GreenPrinceInVerdania => mem
+            .deref(&pd.green_prince_location)
+            .is_ok_and(|n: i32| n == 3),
+        Split::SeenFleatopiaEmpty => mem.deref(&pd.seen_fleatopia_empty).unwrap_or_default(),
+        Split::BeastlingCall => mem.deref(&pd.has_fast_travel_teleport).unwrap_or_default(),
+        Split::SilkSoar => mem.deref(&pd.has_super_jump).unwrap_or_default(),
+        Split::ElegyOfTheDeep => mem
+            .deref(&pd.has_needolin_memory_powerup)
+            .unwrap_or_default(),
+        Split::HeartNyleth => mem.deref(&pd.collected_heart_flower).unwrap_or_default(),
+        Split::HeartKhann => mem.deref(&pd.collected_heart_coral).unwrap_or_default(),
+        Split::HeartKarmelita => mem.deref(&pd.collected_heart_hunter).unwrap_or_default(),
+        Split::HeartClover => mem.deref(&pd.collected_heart_clover).unwrap_or_default(),
+        Split::RedMemory => mem.deref(&pd.completed_red_memory).unwrap_or_default(),
+        Split::BellhouseKeyConversation => mem
+            .deref(&pd.belltown_greeter_house_full_dlg)
+            .unwrap_or_default(),
+        Split::VerdaniaLakeFountainOrbs => mem.deref(&pd.summoned_lake_orbs).unwrap_or_default(),
         Split::VerdaniaOrbsCollected => {
             let orb_02c: bool = mem.deref(&pd.orbs_02c).unwrap_or_default();
             let orb_03: bool = mem.deref(&pd.orbs_03).unwrap_or_default();
@@ -2213,81 +1956,56 @@ pub fn continuous_splits(
                 .into_iter()
                 .fold(0, |acc, x| acc + (x.count_ones() as usize));
             let total = singles + multis;
-            should_split(total >= 12)
+            total >= 12
         }
-        Split::Forebrothers => {
-            should_split(mem.deref(&pd.defeated_dock_foremen).unwrap_or_default())
-        }
-        Split::Groal => should_split(mem.deref(&pd.defeated_swamp_shaman).unwrap_or_default()),
-        Split::SavageBeastfly1 => {
-            should_split(mem.deref(&pd.defeated_bone_flyer_giant).unwrap_or_default())
-        }
-        Split::Conchflies1 => {
-            should_split(mem.deref(&pd.defeated_coral_drillers).unwrap_or_default())
-        }
-        Split::SavageBeastfly2 => should_split(
-            mem.deref(&pd.defeated_bone_flyer_giant_golem_scene)
-                .unwrap_or_default(),
-        ),
-        Split::CaravanTroupeGreymoor => should_split(
-            mem.deref(&pd.caravan_troupe_location)
-                .is_ok_and(|n: i32| n >= 1),
-        ),
-        Split::CaravanTroupeFleatopia => should_split(
-            mem.deref(&pd.caravan_troupe_location)
-                .is_ok_and(|n: i32| n >= 3),
-        ),
-        Split::SoldRelic => should_split(
-            mem.deref(&pd.belltown_relic_dealer_gave_relic)
-                .unwrap_or_default(),
-        ),
-        Split::CollectedWhiteWardKey => {
-            should_split(mem.deref(&pd.collected_ward_key).unwrap_or_default())
-        }
-        Split::PavoTimePassed => should_split(
-            mem.deref(&pd.belltown_greeter_met_time_passed)
-                .unwrap_or_default(),
-        ),
-        Split::SongclaveBell => {
-            should_split(mem.deref(&pd.bell_shrine_enclave).unwrap_or_default())
-        }
-        Split::Voltvyrm => should_split(mem.deref(&pd.defeated_zap_core_enemy).unwrap_or_default()),
-        Split::SkullTyrant1 => should_split(mem.deref(&pd.skull_king_defeated).unwrap_or_default()),
-        Split::ShermaReturned => {
-            should_split(mem.deref(&pd.sherma_healer_active).unwrap_or_default())
-        }
-        Split::JubilanaRescuedMemorium => {
-            should_split(mem.deref(&pd.enclave_merchant_saved).unwrap_or_default())
-        }
+        Split::Forebrothers => mem.deref(&pd.defeated_dock_foremen).unwrap_or_default(),
+        Split::Groal => mem.deref(&pd.defeated_swamp_shaman).unwrap_or_default(),
+        Split::SavageBeastfly1 => mem.deref(&pd.defeated_bone_flyer_giant).unwrap_or_default(),
+        Split::Conchflies1 => mem.deref(&pd.defeated_coral_drillers).unwrap_or_default(),
+        Split::SavageBeastfly2 => mem
+            .deref(&pd.defeated_bone_flyer_giant_golem_scene)
+            .unwrap_or_default(),
+        Split::CaravanTroupeGreymoor => mem
+            .deref(&pd.caravan_troupe_location)
+            .is_ok_and(|n: i32| n >= 1),
+        Split::CaravanTroupeFleatopia => mem
+            .deref(&pd.caravan_troupe_location)
+            .is_ok_and(|n: i32| n >= 3),
+        Split::SoldRelic => mem
+            .deref(&pd.belltown_relic_dealer_gave_relic)
+            .unwrap_or_default(),
+        Split::CollectedWhiteWardKey => mem.deref(&pd.collected_ward_key).unwrap_or_default(),
+        Split::PavoTimePassed => mem
+            .deref(&pd.belltown_greeter_met_time_passed)
+            .unwrap_or_default(),
+        Split::SongclaveBell => mem.deref(&pd.bell_shrine_enclave).unwrap_or_default(),
+        Split::Voltvyrm => mem.deref(&pd.defeated_zap_core_enemy).unwrap_or_default(),
+        Split::SkullTyrant1 => mem.deref(&pd.skull_king_defeated).unwrap_or_default(),
+        Split::ShermaReturned => mem.deref(&pd.sherma_healer_active).unwrap_or_default(),
+        Split::JubilanaRescuedMemorium => mem.deref(&pd.enclave_merchant_saved).unwrap_or_default(),
         Split::JubilanaRescuedChoralChambers => {
-            should_split(mem.deref(&pd.city_merchant_saved).unwrap_or_default())
+            mem.deref(&pd.city_merchant_saved).unwrap_or_default()
         }
-        Split::SilkAndSoulOffered => should_split(
-            mem.deref(&pd.caretaker_offered_snare_quest)
-                .unwrap_or_default(),
-        ),
-        Split::SoulSnareReady => should_split(mem.deref(&pd.soul_snare_ready).unwrap_or_default()),
-        Split::Seth => should_split(mem.deref(&pd.defeated_seth).unwrap_or_default()),
-
-        Split::BallowMoved => should_split(
-            mem.deref(&pd.ballow_moved_to_diving_bell)
-                .unwrap_or_default(),
-        ),
-        Split::Act3Started => should_split(mem.deref(&pd.black_thread_world).unwrap_or_default()),
+        Split::SilkAndSoulOffered => mem
+            .deref(&pd.caretaker_offered_snare_quest)
+            .unwrap_or_default(),
+        Split::SoulSnareReady => mem.deref(&pd.soul_snare_ready).unwrap_or_default(),
+        Split::Seth => mem.deref(&pd.defeated_seth).unwrap_or_default(),
+        Split::BallowMoved => mem
+            .deref(&pd.ballow_moved_to_diving_bell)
+            .unwrap_or_default(),
+        Split::Act3Started => mem.deref(&pd.black_thread_world).unwrap_or_default(),
         // endregion: MiscTE
 
         // region: Abyss
-        Split::AbyssEscape => {
-            should_split(mem.deref(&pd.completed_abyss_ascent).unwrap_or_default())
-        }
-        Split::LostLaceEncountered => {
-            should_split(mem.deref(&pd.encountered_lost_lace).unwrap_or_default())
-        }
+        Split::AbyssEscape => mem.deref(&pd.completed_abyss_ascent).unwrap_or_default(),
+        Split::LostLaceEncountered => mem.deref(&pd.encountered_lost_lace).unwrap_or_default(),
         // endregion: Abyss
 
         // else
-        _ => should_split(false),
-    }
+        _ => false,
+    };
+    should_split(res)
 }
 
 pub fn splits(
