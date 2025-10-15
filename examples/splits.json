@@ -253,6 +253,24 @@
   },
   {
     "alias": null,
+    "description": "Enter Wisp Thicket (Transition)",
+    "key": "EnterWispThicket",
+    "tooltip": "Splits when entering the Wisp Thicket from Greymoor"
+  },
+  {
+    "alias": null,
+    "description": "Enter Father of the Flame (Transition)",
+    "key": "EnterFatherOfTheFlame",
+    "tooltip": "Splits when entering the arena for the Father of the Flame boss"
+  },
+  {
+    "alias": null,
+    "description": "Father of the Flame (Boss)",
+    "key": "FatherOfTheFlame",
+    "tooltip": "Splits when defeating Father of the Flame"
+  },
+  {
+    "alias": null,
     "description": "Enter Shellwood (Transition)",
     "key": "EnterShellwood",
     "tooltip": "Splits when entering Shellwood"
