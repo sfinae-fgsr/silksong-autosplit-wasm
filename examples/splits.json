@@ -337,6 +337,12 @@
   },
   {
     "alias": null,
+    "description": "Great Conchflies (Transition)",
+    "key": "GreatConchfliesTrans",
+    "tooltip": "Splits on the transition after defeating the Great Conchflies boss"
+  },
+  {
+    "alias": null,
     "description": "Needle Strike (Skill)",
     "key": "NeedleStrike",
     "tooltip": "Splits when obtaining Needle Strike (Charge Slash)"
@@ -418,6 +424,12 @@
     "description": "Phantom (Boss)",
     "key": "Phantom",
     "tooltip": "Splits when killing Phantom"
+  },
+  {
+    "alias": null,
+    "description": "Phantom (Transition)",
+    "key": "PhantomTrans",
+    "tooltip": "Splits on the transition after killing Phantom"
   },
   {
     "alias": null,
@@ -544,6 +556,12 @@
     "description": "Raging Conchfly (Boss)",
     "key": "RagingConchfly",
     "tooltip": "Splits when the Raging Conchfly (single-enemy second encounter) is defeated"
+  },
+  {
+    "alias": null,
+    "description": "Raging Conchfly (Transition)",
+    "key": "RagingConchflyTrans",
+    "tooltip": "Splits on the transition after defeating Raging Conchfly"
   },
   {
     "alias": null,
