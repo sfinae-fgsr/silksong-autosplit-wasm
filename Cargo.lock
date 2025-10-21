@@ -173,7 +173,7 @@ dependencies = [
 
 [[package]]
 name = "silksong-autosplit-wasm"
-version = "1.12.0"
+version = "1.13.0"
 dependencies = [
  "asr",
  "bytemuck",
