@@ -446,6 +446,44 @@ declare_pointers!(PlayerDataPointers {
     completion_percentage: UnityPointer<3> = pdp("completionPercentage"),
 });
 
+impl PlayerDataPointers {
+    pub fn fleas(&self) -> [&UnityPointer<3>; 30] {
+        // ordered as roughly: any% flea route fleas, TE fleas, remaining awoo% fleas
+        [
+            &self.savedflea_bone_east_05,
+            &self.savedflea_bone_east_17b,
+            &self.savedflea_dock_16,
+            &self.savedflea_ant_03,
+            &self.savedflea_bone_06,
+            &self.savedflea_shellwood_03,
+            &self.savedflea_belltown_04,
+            &self.savedflea_greymoor_15b,
+            &self.savedflea_crawl_06,
+            &self.savedflea_slab_cell,
+            &self.savedflea_song_11,
+            &self.savedflea_library_01,
+            &self.savedflea_under_21,
+            &self.savedflea_peak_05c,
+            &self.savedflea_slab_06,
+            &self.savedflea_coral_35,
+            &self.savedflea_coral_24,
+            &self.savedflea_greymoor_06,
+            &self.caravan_lech_saved,
+            &self.savedflea_dust_12,
+            &self.savedflea_shadow_28,
+            &self.savedflea_shadow_10,
+            &self.savedflea_library_09,
+            &self.tamed_giant_flea,
+            &self.met_troupe_hunter_wild,
+            &self.savedflea_slab_cell,
+            &self.savedflea_under_23,
+            &self.savedflea_dust_09,
+            &self.savedflea_dock_03d,
+            &self.savedflea_bone_east_10_church,
+        ]
+    }
+}
+
 // --------------------------------------------------------
 
 pub struct Memory<'a> {

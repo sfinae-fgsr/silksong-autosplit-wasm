@@ -1056,6 +1056,22 @@ pub enum Split {
     ///
     /// Splits after freeing Kratt
     SavedFleaKratt,
+    /// Saved 5 Fleas (Flea)
+    ///
+    /// Splits after saving 5 Fleas
+    Saved5Fleas,
+    /// Saved 12 Fleas (Flea)
+    ///
+    /// Splits after saving 12 Fleas
+    Saved12Fleas,
+    /// Saved 22 Fleas (Flea)
+    ///
+    /// Splits after saving 22 Fleas
+    Saved22Fleas,
+    /// Saved 30 Fleas (Flea)
+    ///
+    /// Splits after saving all 30 Fleas
+    Saved30Fleas,
     // endregion: FleaSpecific
 
     // region: Bellways
@@ -1879,6 +1895,21 @@ fn spool_shard_split(mem: &Memory, pd: &PlayerDataPointers, shard: i32) -> bool 
             .is_ok_and(|n: i32| n == current_shards))
 }
 
+fn flea_split(mem: &Memory, pd: &PlayerDataPointers, flea_count: i32) -> bool {
+    let fleas = pd.fleas();
+    let mut count: i32 = 0;
+
+    for flea in fleas {
+        let collected: bool = mem.deref(&flea).unwrap_or_default();
+        count += collected as i32;
+
+        if count >= flea_count {
+            return true;
+        }
+    }
+    false
+}
+
 pub fn continuous_splits(
     split: &Split,
     mem: &Memory,
@@ -2318,6 +2349,21 @@ pub fn continuous_splits(
         }
         Split::SavedFleaKratt => {
             should_split(mem.deref(&pd.caravan_lech_saved).unwrap_or_default())
+        }
+        Split::Saved5Fleas => should_split(flea_split(mem, pd, 5)),
+        Split::Saved12Fleas => should_split(flea_split(mem, pd, 12)),
+        Split::Saved22Fleas => should_split(flea_split(mem, pd, 22)),
+        Split::Saved30Fleas => {
+            let fleas = pd.fleas();
+
+            // iterate in reverse order to fail fast
+            for flea in fleas.into_iter().rev() {
+                let collected: bool = mem.deref(&flea).unwrap_or_default();
+                if !collected {
+                    return should_split(false);
+                }
+            }
+            should_split(true)
         }
         // endregion: FleaSpecific
 
