@@ -1187,6 +1187,10 @@ pub enum Split {
     ///
     /// Splits after seeing Shakra in Sands of Karak
     SeenShakraSandsOfKarak,
+    /// Shakra Map Buyout (NPC)
+    ///
+    /// Splits after purchasing all of Shakra's maps
+    ShakraMapBuyout,
     // endregion: ShakraEncounters
 
     // region: MiscTE
@@ -2419,6 +2423,31 @@ pub fn continuous_splits(
         }
         Split::SeenShakraSandsOfKarak => {
             should_split(mem.deref(&pd.seen_mapper_coral_caverns).unwrap_or_default())
+        }
+        Split::ShakraMapBuyout => {
+            // iterate over maps in reverse shop order to fail out as quickly as possible
+            let maps = &[
+                &pd.has_swamp_map,
+                &pd.has_coral_map,
+                &pd.has_peak_map,
+                &pd.has_dustpens_map,
+                &pd.has_judge_steps_map,
+                &pd.has_shellwood_map,
+                &pd.has_bellhart_map,
+                &pd.has_greymoor_map,
+                &pd.has_hunters_nest_map,
+                &pd.has_crawl_map,
+                &pd.has_wilds_map,
+                &pd.has_docks_map,
+                &pd.has_boneforest_map,
+                &pd.has_moss_grotto_map,
+            ];
+            for map in maps {
+                if mem.deref::<bool, 3>(&map).unwrap_or_default() == false {
+                    return should_split(false);
+                }
+            }
+            should_split(true)
         }
         // endregion: ShakraEncounters
 
