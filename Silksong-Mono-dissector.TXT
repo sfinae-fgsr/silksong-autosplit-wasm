@@ -2454,6 +2454,29 @@
 			methods
 			base class
 
+		20d14b64fe8 : EnemyJournalKillData
+			static fields
+			fields
+				10 : list (type: System.Collections.Generic.List<EnemyJournalKillData.NamedKillData>)
+				18 : dictionary (type: System.Collections.Generic.Dictionary<System.String,EnemyJournalKillData.KillData>)
+			methods
+			base class
+
+		20d14d64390 : EnemyJournalKillData+KillData
+			static fields
+			fields
+				10 : Kills (type: System.Int32)
+				14 : HasBeenSeen (type: System.Boolean)
+			methods
+			base class
+		20d150d96d8 : EnemyJournalKillData+NamedKillData
+			static fields
+			fields
+				10 : Name (type: System.String)
+				18 : Record (type: EnemyJournalKillData.KillData)
+			methods
+			base class
+
 		1f185af3908 : ToolItemsData
 			static fields
 			fields
