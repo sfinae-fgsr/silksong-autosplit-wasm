@@ -2513,6 +2513,41 @@
 					methods
 					base class
 
+		17380eb0738 : QuestCompletionData
+			static fields
+			fields
+			methods
+			base class
+				173807581c8 : SerializableNamedList`2[QuestCompletionData+Completion,QuestCompletionData+NamedCompletion]
+					static fields
+					fields
+						10 : savedData (type: System.Collections.Generic.List<QuestCompletionData.NamedCompletion>)
+						18 : RuntimeData (type: System.Collections.Generic.Dictionary<System.String,QuestCompletionData.Completion>)
+					methods
+					base class
+		17380eb0628 : QuestCompletionData+Completion
+			static fields
+			fields
+				10 : HasBeenSeen (type: System.Boolean)
+				11 : IsAccepted (type: System.Boolean)
+				14 : CompletedCount (type: System.Int32)
+				18 : IsCompleted (type: System.Boolean)
+				19 : WasEverCompleted (type: System.Boolean)
+			methods
+			base class
+		17380eb0bc8 : QuestCompletionData+NamedCompletion
+			static fields
+			fields
+			methods
+			base class
+				17380758088 : SerializableNamedData`1[QuestCompletionData+Completion]
+					static fields
+					fields
+						10 : Name (type: System.String)
+						18 : Data (type: QuestCompletionData.Completion)
+					methods
+					base class
+
 		2ac96d7bdb8 : UIManager
 			static fields
 				0 : _showProp (type: System.Int32)
