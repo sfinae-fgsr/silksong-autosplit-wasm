@@ -64,6 +64,24 @@ Open the OBS Settings from File, Settings:
 - Set a hotkey for `Toggle Timing Method`, and hit Ok.
 - Hit that hotkey once to switch from the default, Real Time, to Game Time.
 
+## Custom Variables: hits, percent
+
+You can show the completion percent with Edit layout:
+- Plus, Information, Text
+- Layout settings, Text:
+  - check the box for Custom Variable
+  - Custom Variable Name: `percent`
+ 
+Some percents might not update the `percent` immediately, but will update on the next save point or when you open inventory.
+ 
+If you have the Hit Counter setting turned on, you can show the number of hits with Edit Layout:
+- Plus, Information, Text
+- Layout settings, Text:
+  - check the box for Custom Variable
+  - Custom Variable Name: `hits`
+ 
+You can also send hits to HitCounterManager via the [LiveSplit.HitCounterManagerConnector](https://github.com/topeterk/LiveSplit.HitCounterManagerConnector) component.
+
 ## Compilation
 
 This auto splitter is written in Rust. In order to compile it, you need to
