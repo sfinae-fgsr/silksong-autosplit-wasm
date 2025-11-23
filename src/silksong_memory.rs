@@ -303,6 +303,9 @@ declare_pointers!(PlayerDataPointers {
     belltown_doctor_cured_curse: UnityPointer<3> = pdp("BelltownDoctorCuredCurse"),
     completed_memory_shaman: UnityPointer<3> = pdp("completedMemory_shaman"),
     has_bound_crest_upgrader: UnityPointer<3> = pdp("HasBoundCrestUpgrader"),
+    current_crest_id: UnityPointer<3> = pdp("CurrentCrestID"),
+    unlocked_extra_blue_slot: UnityPointer<3> = pdp("UnlockedExtraBlueSlot"),
+    unlocked_extra_yellow_slot: UnityPointer<3> = pdp("UnlockedExtraYellowSlot"),
     tool_pouch_upgrades: UnityPointer<3> = pdp("ToolPouchUpgrades"),
     tool_kit_upgrades: UnityPointer<3> = pdp("ToolKitUpgrades"),
 

@@ -957,6 +957,22 @@ pub enum Split {
     ///
     /// Splits when leaving the room with the Shaman Crest unlocked
     ShamanCrestTrans,
+    /// Hunter Crest Evolution 1 (Upgrade)
+    ///
+    /// Splits when the first upgrade to the Hunter Crest is obtained
+    HunterCrestEvo1,
+    /// Vesticrest Slot 1 (Upgrade)
+    ///
+    /// Splits when obtaining the Vesticrest yellow tool slot
+    VesticrestYellowSlot,
+    /// Vesticrest Slot 2 (Upgrade)
+    ///
+    /// Splits when obtaining the Vesticrest blue tool slot
+    VesticrestBlueSlot,
+    /// Hunter Crest Evolution 2 (Upgrade)
+    ///
+    /// Splits when the second upgrade to the Hunter Crest is obtained
+    HunterCrestEvo2,
     /// Sylphsong (Skill)
     ///
     /// Splits when obtaining Sylphsong after binding Eva
@@ -2309,6 +2325,21 @@ pub fn continuous_splits(split: &Split, e: &Env, store: &mut Store) -> SplitterA
         ),
         Split::ShamanCrest => {
             should_split(mem.deref(&pd.completed_memory_shaman).unwrap_or_default())
+        }
+        Split::HunterCrestEvo1 => {
+            let crest = mem.read_string(&pd.current_crest_id).unwrap_or_default();
+            should_split(crest == "Hunter_v2")
+        }
+        Split::HunterCrestEvo2 => {
+            let crest = mem.read_string(&pd.current_crest_id).unwrap_or_default();
+            should_split(crest == "Hunter_v3")
+        }
+        Split::VesticrestYellowSlot => should_split(
+            mem.deref(&pd.unlocked_extra_yellow_slot)
+                .unwrap_or_default(),
+        ),
+        Split::VesticrestBlueSlot => {
+            should_split(mem.deref(&pd.unlocked_extra_blue_slot).unwrap_or_default())
         }
         Split::Sylphsong => {
             should_split(mem.deref(&pd.has_bound_crest_upgrader).unwrap_or_default())
