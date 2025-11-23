@@ -268,7 +268,7 @@ pub enum Split {
     EnterBellhart,
     /// Widow Encountered (Boss)
     ///
-    /// Splits when the Widow boss fight is first encountered
+    /// Splits when Widow boss encounter begins, after she disappears from the background scene
     WidowEncountered,
     /// Widow (Boss)
     ///
