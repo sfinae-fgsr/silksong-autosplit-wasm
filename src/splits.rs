@@ -1134,7 +1134,7 @@ pub enum Split {
     ///
     /// Splits after unlocking Shellwood Bellway
     ShellwoodStation,
-    /// Bellway (Transition)
+    /// Bellway Travel (Transition)
     ///
     /// Splits when riding the Bell Beast through the Bellways
     BellwayTrans,
@@ -1166,6 +1166,10 @@ pub enum Split {
     ///
     /// Splits after unlocking Memorium Ventrica
     MemoriumTube,
+    /// Ventrica Travel (Transition)
+    ///
+    /// Splits when traveling to another room using the Ventrica system
+    VentricaTrans,
     // endregion: Ventricas
 
     // region: ShakraEncounters
@@ -1858,6 +1862,13 @@ pub fn transition_splits(split: &Split, scenes: &Pair<&str>, e: &Env) -> Splitte
             scenes.old == CINEMATIC_STAG_TRAVEL && scenes.current != CINEMATIC_STAG_TRAVEL,
         ),
         // endregion: Bellway
+
+        // region: Ventrica
+        Split::VentricaTrans => {
+            let gate = mem.read_string(&gm.entry_gate_name).unwrap_or_default();
+            should_split(gate == "door_tubeEnter" && (scenes.current != scenes.old))
+        }
+        // endregion: Ventrica
 
         // region: MiscTE
         Split::EnterBellEater => should_split(
