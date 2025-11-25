@@ -8,9 +8,10 @@ use utf16_lit::utf16;
 
 use crate::{
     silksong_memory::{
-        get_at_bench, get_health, get_respawn_scene, is_discontinuity_scene, is_menu, Env,
-        SceneStore, CINEMATIC_STAG_TRAVEL, DEATH_RESPAWN_MARKER_INIT, GAME_STATE_PLAYING,
-        MENU_TITLE, NON_MENU_GAME_STATES, OPENING_SCENES,
+        get_at_bench, get_health, get_heart_pieces, get_max_health_base, get_respawn_scene,
+        is_discontinuity_scene, is_menu, Env, SceneStore, CINEMATIC_STAG_TRAVEL,
+        DEATH_RESPAWN_MARKER_INIT, GAME_STATE_PLAYING, MENU_TITLE, NON_MENU_GAME_STATES,
+        OPENING_SCENES,
     },
     store::Store,
     timer::{should_split, SplitterAction},
@@ -715,6 +716,10 @@ pub enum Split {
     // endregion: NeedleUpgrade
 
     // region: MaskShards
+    /// Mask Shard (Obtain)
+    ///
+    /// Splits when obtaining a Mask Shard or a complete Mask upgrade
+    OnObtainMaskShard,
     /// Mask Shard 1 (Fragment)
     ///
     /// Splits when getting 1st Mask Shard
@@ -2491,6 +2496,16 @@ pub fn continuous_splits(split: &Split, e: &Env, store: &mut Store) -> SplitterA
         // endregion: NeedleUpgrade
 
         // region: MaskShards
+        Split::OnObtainMaskShard => {
+            let max_hp_increased = store
+                .get_i32_pair_bang("max_health_base", &get_max_health_base, Some(e))
+                .is_some_and(|p| p.increased());
+            let shards_increased = store
+                .get_i32_pair_bang("heart_pieces", &get_heart_pieces, Some(e))
+                // sanity check: mask shards should go from 3 to 0 on mask completion
+                .is_some_and(|p| p.increased() && p.current < 4);
+            should_split(max_hp_increased || shards_increased)
+        }
         Split::MaskShard1 => should_split(mask_shard_split(e, 1)),
         Split::MaskShard2 => should_split(mask_shard_split(e, 2)),
         Split::MaskShard3 => should_split(mask_shard_split(e, 3)),
