@@ -271,6 +271,10 @@ pub enum Split {
     ///
     /// Splits when entering Bellhart
     EnterBellhart,
+    /// Widow Encountered (Boss)
+    ///
+    /// Splits when Widow boss encounter begins, after she disappears from the background scene
+    WidowEncountered,
     /// Widow (Boss)
     ///
     /// Splits when killing Widow
@@ -2313,6 +2317,9 @@ pub fn continuous_splits(split: &Split, e: &Env, store: &mut Store) -> SplitterA
         // endregion: Shellwood
 
         // region: Bellhart
+        Split::WidowEncountered => {
+            should_split(mem.deref(&pd.encountered_spinner).unwrap_or_default())
+        }
         Split::Widow => should_split(mem.deref(&pd.spinner_defeated).unwrap_or_default()),
         Split::MenuNeedolinMemory => {
             store.get_string_bang("respawn_scene", &get_respawn_scene, Some(e));
