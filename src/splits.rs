@@ -328,10 +328,6 @@ pub enum Split {
     ///
     /// Splits when killing Last Judge
     LastJudge,
-    /// Enter Citadel Front Gate (Transition)
-    ///
-    /// Splits when entering the Citadel past the Last Judge arena
-    EnterCitadelFrontGate,
     // endregion: BlastedSteps
 
     // region: SinnersRoad
@@ -526,6 +522,14 @@ pub enum Split {
     #[alias = "WhisperingVaultsGauntlet"]
     WhisperingVaultsArena,
     // endregion: WhisperingVaults
+
+    // region: GrandGate
+    /// Enter Grand Gate (Transition)
+    ///
+    /// Splits when entering the Grand Gate region, past the Last Judge door or into the top of the scales room
+    #[alias = "EnterCitadelFrontGate"]
+    EnterGrandGate,
+    // endregion: GrandGate
 
     // region: ChoralChambers
     /// Enter Songclave (Transition)
@@ -1919,9 +1923,6 @@ pub fn transition_splits(split: &Split, scenes: &Pair<&str>, e: &Env) -> Splitte
         Split::EnterLastJudge => {
             should_split(scenes.old == "Coral_32" && scenes.current == "Coral_Judge_Arena")
         }
-        Split::EnterCitadelFrontGate => {
-            should_split(scenes.old == "Coral_Judge_Arena" && scenes.current == "Coral_10")
-        }
         // endregion: BlastedSteps
 
         // region: SinnersRoad
@@ -2001,6 +2002,13 @@ pub fn transition_splits(split: &Split, scenes: &Pair<&str>, e: &Env) -> Splitte
                 .unwrap_or_default(),
         ),
         // endregion: SandsOfKarak
+
+        // region: GrandGate
+        Split::EnterGrandGate => should_split(
+            (scenes.old == "Coral_Judge_Arena" && scenes.current == "Coral_10")
+                || (scenes.old == "Song_01c" && scenes.current == "Song_19_entrance"),
+        ),
+        // endregion: GrandGate
 
         // region: ChoralChambers
         Split::EnterSongclave => should_split(
