@@ -1,6 +1,5 @@
 use core::mem;
 
-#[cfg(debug_assertions)]
 use alloc::format;
 use alloc::{
     boxed::Box,
