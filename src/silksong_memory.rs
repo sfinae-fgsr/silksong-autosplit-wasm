@@ -506,7 +506,11 @@ impl Memory<'_> {
             }
             for _ in 0..0x10 {
                 if let Some(image) = module.get_default_image(process) {
-                    asr::print_message("Memory wait_attach: got module and image");
+                    asr::print_message(&format!(
+                        "Memory wait_attach: got module and image, pointer_size = {:?}, Mono version = {:?}",
+                        module.get_pointer_size(),
+                        module.get_version(),
+                    ));
                     next_tick().await;
                     return Memory {
                         process,
