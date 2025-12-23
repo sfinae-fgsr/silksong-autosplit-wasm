@@ -11,7 +11,7 @@ checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
 [[package]]
 name = "asr"
 version = "0.1.0"
-source = "git+https://github.com/AlexKnauth/asr?branch=split-index#469688256cb01a963007b3283d8165ad967b6648"
+source = "git+https://github.com/AlexKnauth/asr?branch=split-index#3cdf36fa0ca1306c9f4000369ccb7761bff0830f"
 dependencies = [
  "arrayvec",
  "asr-derive",
@@ -25,7 +25,7 @@ dependencies = [
 [[package]]
 name = "asr-derive"
 version = "0.1.0"
-source = "git+https://github.com/AlexKnauth/asr?branch=split-index#469688256cb01a963007b3283d8165ad967b6648"
+source = "git+https://github.com/AlexKnauth/asr?branch=split-index#3cdf36fa0ca1306c9f4000369ccb7761bff0830f"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -216,7 +216,7 @@ checksum = "c9e9a38711f559d9e3ce1cdb06dd7c5b8ea546bc90052da6d06bb76da74bb07c"
 [[package]]
 name = "ugly_widget"
 version = "0.1.0"
-source = "git+https://github.com/AlexKnauth/hollowknight-autosplit-wasm#d0bb9302d27b5339f0fcb86048ce5d3b1212c90c"
+source = "git+https://github.com/AlexKnauth/hollowknight-autosplit-wasm#f8b573613343e09b699084aa23974e7da39585eb"
 dependencies = [
  "asr",
  "ugly_widget_derive",
@@ -225,7 +225,7 @@ dependencies = [
 [[package]]
 name = "ugly_widget_derive"
 version = "0.1.0"
-source = "git+https://github.com/AlexKnauth/hollowknight-autosplit-wasm#d0bb9302d27b5339f0fcb86048ce5d3b1212c90c"
+source = "git+https://github.com/AlexKnauth/hollowknight-autosplit-wasm#f8b573613343e09b699084aa23974e7da39585eb"
 dependencies = [
  "quote",
  "syn",
