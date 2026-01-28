@@ -1857,10 +1857,9 @@ impl StoreWidget for Split {
 pub fn menu_splits(
     split: &Split,
     scenes: &Pair<&str>,
-    e: &Env,
+    _e: &Env,
     store: &mut Store,
 ) -> SplitterAction {
-    let Env { mem, pd, .. } = e;
     match split {
         // region: Start, End, and Menu
         Split::Menu => should_split(scenes.current == MENU_TITLE),
@@ -1874,12 +1873,16 @@ pub fn menu_splits(
         // endregion: Bellhart
 
         // region: ThreefoldMelody
-        Split::ConductorsMelodyMenu => {
-            should_split(mem.deref(&pd.has_melody_conductor).unwrap_or_default())
-        }
-        Split::VaultkeepersMelodyMenu => {
-            should_split(mem.deref(&pd.has_melody_librarian).unwrap_or_default())
-        }
+        Split::ConductorsMelodyMenu => should_split(
+            store
+                .get_bool_pair("has_melody_conductor")
+                .is_some_and(|m| m.current),
+        ),
+        Split::VaultkeepersMelodyMenu => should_split(
+            store
+                .get_bool_pair("has_melody_librarian")
+                .is_some_and(|m| m.current),
+        ),
         // endregion: ThreefoldMelody
 
         // else
@@ -2648,11 +2651,27 @@ pub fn continuous_splits(split: &Split, e: &Env, store: &mut Store) -> SplitterA
         Split::VaultkeepersMelody => {
             should_split(mem.deref(&pd.has_melody_librarian).unwrap_or_default())
         }
+        Split::VaultkeepersMelodyMenu => {
+            store.get_bool_pair_bang(
+                "has_melody_librarian",
+                &|e| e?.mem.deref(&e?.pd.has_melody_librarian).ok(),
+                Some(e),
+            );
+            should_split(false)
+        }
         Split::ArchitectsMelody => {
             should_split(mem.deref(&pd.has_melody_architect).unwrap_or_default())
         }
         Split::ConductorsMelody => {
             should_split(mem.deref(&pd.has_melody_conductor).unwrap_or_default())
+        }
+        Split::ConductorsMelodyMenu => {
+            store.get_bool_pair_bang(
+                "has_melody_conductor",
+                &|e| e?.mem.deref(&e?.pd.has_melody_conductor).ok(),
+                Some(e),
+            );
+            should_split(false)
         }
         Split::UnlockedMelodyLift => {
             should_split(mem.deref(&pd.unlocked_melody_lift).unwrap_or_default())
