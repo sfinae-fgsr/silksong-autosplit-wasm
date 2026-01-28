@@ -738,6 +738,10 @@ pub enum Split {
     ///
     /// Splits on the transition after learning Vaultkeepers Melody
     VaultkeepersMelodyTrans,
+    /// Vaultkeepers Melody (Menu)
+    ///
+    /// Splits on the main menu after learning Vaultkeepers Melody
+    VaultkeepersMelodyMenu,
     /// Architects Melody (Melody)
     ///
     /// Splits when learning Architects Melody
@@ -754,6 +758,10 @@ pub enum Split {
     ///
     /// Splits on the transition after learning Conductors Melody
     ConductorsMelodyTrans,
+    /// Conductors Melody (Menu)
+    ///
+    /// Splits on the main menu after learning Conductors Melody
+    ConductorsMelodyMenu,
     /// Unlock Threefold Melody Lift (Event)
     ///
     /// Splits when unlocking the Threefold Melody Lift
@@ -1849,9 +1857,10 @@ impl StoreWidget for Split {
 pub fn menu_splits(
     split: &Split,
     scenes: &Pair<&str>,
-    _e: &Env,
+    e: &Env,
     store: &mut Store,
 ) -> SplitterAction {
+    let Env { mem, pd, .. } = e;
     match split {
         // region: Start, End, and Menu
         Split::Menu => should_split(scenes.current == MENU_TITLE),
@@ -1863,6 +1872,15 @@ pub fn menu_splits(
                 && store.get_string("respawn_scene").unwrap_or_default() == "Belltown_Shrine",
         ),
         // endregion: Bellhart
+
+        // region: ThreefoldMelody
+        Split::ConductorsMelodyMenu => {
+            should_split(mem.deref(&pd.has_melody_conductor).unwrap_or_default())
+        }
+        Split::VaultkeepersMelodyMenu => {
+            should_split(mem.deref(&pd.has_melody_librarian).unwrap_or_default())
+        }
+        // endregion: ThreefoldMelody
 
         // else
         _ => should_split(false),
